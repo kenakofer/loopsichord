@@ -5,6 +5,7 @@ import numpy as np
 from time import sleep
 from tkinter import filedialog
 from loop import *
+import wave
 import math
 
 class AudioPlayer:
@@ -143,7 +144,6 @@ class AudioPlayer:
         self.base_volume *= .9
 
     def write_loop(self, filename, frame_rate=44100, sample_width=4, volume_adjustment=.8):
-        import wave
         ## Filter out loops which haven't been used
         save_loops = list(filter(lambda l: l.has_recorded, self.loops))
         ## Concatenate buffers within each loop
