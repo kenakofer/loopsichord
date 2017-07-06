@@ -46,6 +46,11 @@ class MusicMaker:
         keys.clear()
         keys.extend(pygame.key.get_pressed())
 
+        ## Center scales around mouse
+        if self.b_middle and not last_b_middle:
+            self.background_needs_update = True
+            m_x, m_y = self.center_scales_around(m_x, m_y)
+
         ## Run events scheduled for the beginning of the step
         for e in sorted(list(self.events), key=lambda e: e[0]):
             if e[2] == BEGIN_STEP:
@@ -178,11 +183,6 @@ class MusicMaker:
         if (self.b_right):
             self.scale = CHROMATIC_SCALE
 
-        ## Center scales around mouse
-        if self.b_middle and not last_b_middle:
-            self.background_needs_update = True
-            self.center_scales_around(m_x, m_y)
-
         ## Show and hide the instructions (really for QUESTION_MARK, but SLASH is more accepting)
         if (keys[SLASH] and not last_keys[SLASH]):
             self.show_instructions = not self.show_instructions
@@ -202,11 +202,11 @@ class MusicMaker:
         self.scale = SCALES[self.scale_index]
 
         ## Decide whether to align to the closest pitch, or use the mouse pitch
-        if not last_b_middle:
-            if is_key_mod(K_S, None):
-                self.pitch = self.mouse_pitch
-            elif self.b_left or self.audio_player.volume == 0: 
-                self.pitch = self.closest_pitch
+        #if not last_b_middle:
+        if is_key_mod(K_S, None):
+            self.pitch = self.mouse_pitch
+        elif self.b_left or self.audio_player.volume == 0: 
+            self.pitch = self.closest_pitch
 
         ## Run events scheduled for the end of the step
         for e in sorted(list(self.events), key=lambda e: e[0]):
@@ -227,6 +227,7 @@ class MusicMaker:
         new_m_x = self.pitch_to_coord(self.mouse_pitch)
         new_m_y = m_y-y_diff*self.scale_height
         pygame.mouse.set_pos(new_m_x, new_m_y)
+        return new_m_x, new_m_y
 
     def paint_screen(self):
         ## Draw the mostly unchanging buffered background
