@@ -126,6 +126,19 @@ class MusicMaker:
             self.audio_player.active_loop_index += 1
             self.audio_player.active_loop_index %= len(self.audio_player.loops)
 
+        ## Move the active loop up and down in the lineup
+        if self.audio_player.active_loop_index >= 0:
+            index = self.audio_player.active_loop_index
+            other_index=-1
+            if is_key_mod(UP, CTRL) and not last_keys[UP]:
+                other_index = (index-1)%len(self.audio_player.loops)
+            elif is_key_mod(DOWN, CTRL) and not last_keys[DOWN]:
+                other_index = (index+1)%len(self.audio_player.loops)
+            if other_index >= 0:
+                loops = self.audio_player.loops
+                loops[index], loops[other_index] = loops[other_index], loops[index]
+                self.audio_player.active_loop_index = other_index
+
         ## Combine this loop with the one below it 
         if (keys[PLUS] and not last_keys[PLUS]) or (keys[pygame.K_KP_PLUS] and not last_keys[pygame.K_KP_PLUS]):
             loop_count = len(self.audio_player.loops)
