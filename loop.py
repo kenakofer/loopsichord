@@ -52,18 +52,18 @@ class Loop:
         # TODO for all RecordedNotes, change pitch, recalculate
         assert False
 
-    def paint_self(self, screen, rect, is_active):
+    def paint_self(self, screen, rect, is_active, is_recording):
         (x,y,w,h) = rect
         if self.image == None or self.image_needs_update:
-            self.image = self.redraw_self(w,h)
+            self.image = self.redraw_self(w,h, is_recording)
         screen.blit(self.image, (x,y,w,h))
         if is_active:
             pygame.draw.rect(screen, ACTIVE_LOOP_OUTLINE_COLOR, rect, 1)
 
-    def redraw_self(self, w, h):
+    def redraw_self(self, w, h, recording):
         self.image_needs_update = False
         screen = pygame.Surface((w,h))
-        screen.fill((50,50,50))
+        screen.fill((50,50,50)) if not recording else screen.fill((50,50,150))
         flat_notes = [rn for sublist in self.recorded_notes for rn in sublist]
         if len(flat_notes) == 0:
             return screen

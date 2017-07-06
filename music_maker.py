@@ -216,7 +216,7 @@ class MusicMaker:
         v_margin = 10
         for i in range(len(self.audio_player.loops)):
             loop = self.audio_player.loops[i]
-            loop.paint_self(self.screen, (x,y,w,h), i==self.audio_player.active_loop_index)
+            loop.paint_self(self.screen, (x,y,w,h), i==self.audio_player.active_loop_index, self.audio_player.loop_recording)
             y += h + v_margin
         pygame.display.flip()
     

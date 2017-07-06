@@ -115,11 +115,8 @@ class AudioPlayer:
             print("starting recording")
         elif action == ACTION_STOP_LOOP_REC:
             self.loop_recording = False
-            #if self.loops[self.active_loop_index].has_recorded:
-            #    self.active_loop_index += 1
-            #    self.loop_playing = True
-                #if self.active_loop_index + 1 >= len(self.loops):
-                #    self.loops.append(Loop(self.loop_length))
+            ## Manually request an image update so the background can change properly
+            self.loops[self.active_loop_index].image_needs_update = True
             print("stopping recording")
 
         elif action == ACTION_START_LOOP_PLAY and not self.loop_playing:
