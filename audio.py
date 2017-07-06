@@ -14,9 +14,9 @@ class AudioPlayer:
         self.music_maker = music_maker
         self.percent_through_period = 0
         self.callback_flag = pa.paContinue
-        self.active_loop_index = 0
+        self.active_loop_index = -1
         self.loop_length = BUFFERS_PER_MEASURE
-        self.loops = [Loop(self.loop_length)]
+        self.loops = []
         self.loop_buffer_index = 0
         self.previous_volume = 0
         self.base_volume = VOLUME
@@ -109,14 +109,17 @@ class AudioPlayer:
 
         elif action == ACTION_START_LOOP_REC and not self.loop_recording:
             self.loop_recording = True
+            if self.active_loop_index < 0 or self.loops[self.active_loop_index].has_recorded:
+                self.loops.insert(self.active_loop_index+1, Loop(self.loop_length))
+                self.active_loop_index += 1
             print("starting recording")
         elif action == ACTION_STOP_LOOP_REC:
             self.loop_recording = False
-            if self.loops[self.active_loop_index].has_recorded:
-                self.active_loop_index += 1
-                self.loop_playing = True
-                if self.active_loop_index + 1 >= len(self.loops):
-                    self.loops.append(Loop(self.loop_length))
+            #if self.loops[self.active_loop_index].has_recorded:
+            #    self.active_loop_index += 1
+            #    self.loop_playing = True
+                #if self.active_loop_index + 1 >= len(self.loops):
+                #    self.loops.append(Loop(self.loop_length))
             print("stopping recording")
 
         elif action == ACTION_START_LOOP_PLAY and not self.loop_playing:

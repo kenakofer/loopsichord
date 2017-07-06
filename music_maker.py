@@ -128,9 +128,10 @@ class MusicMaker:
 
         ## Delete the current loop with backspace or delete
         if (is_key_mod(BACKSPACE, None) and not last_keys[BACKSPACE]) or (is_key_mod(DELETE, None) and not last_keys[DELETE]):
-            del self.audio_player.loops[self.audio_player.active_loop_index]
-            if self.audio_player.active_loop_index >= len(self.audio_player.loops):
-                self.audio_player.loops.append(Loop(self.audio_player.loop_length))
+            if self.audio_player.active_loop_index >= 0:
+                del self.audio_player.loops[self.audio_player.active_loop_index]
+                if self.audio_player.active_loop_index >= len(self.audio_player.loops):
+                    self.audio_player.active_loop_index -= 1
 
         ## Articulating and continuing a note playing
         if self.b_left and not self.audio_player.playing and not EVENT_ARTICULATE_NOTE in self.events:
