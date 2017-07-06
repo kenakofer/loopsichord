@@ -13,7 +13,6 @@ def main():
     # set screen width/height and caption
     screen = pygame.display.set_mode(SCREEN_DIM)
     pygame.display.set_caption('Some digital instrument thing')
-    print(pygame.font.get_init())
     root = Tk()
     root.withdraw() # won't need this
     while get_font() == None:

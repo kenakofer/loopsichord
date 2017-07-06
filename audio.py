@@ -56,10 +56,11 @@ class AudioPlayer:
         try:
             if flag:
                 print("Playback error: %i" % flag)
-            self.freq = AudioPlayer.musical_pitch_to_hertz(self.music_maker.pitch)
 
             ## Do step is where all the action happens
             self.music_maker.do_step()
+
+            self.freq = AudioPlayer.musical_pitch_to_hertz(self.music_maker.pitch)
 
             if self.volume != 0:
                 ## Generate a sin wave with overtones, starting at the percent through a period where the previous one left off. Return the samples and the percent through the period that the samples ends
@@ -99,32 +100,20 @@ class AudioPlayer:
             return (None, pa.paAbort)
 
     def do_action(self, action):
-        if action == ACTION_ARTICULATE_NOTE:
-            if not self.playing:
-                self.volume = ARTICULATION_FACTOR * self.adjusted_base_volume()
-                self.previous_volume = self.volume
-                self.playing=True
-            else:
-                print("A note is already sounding")
-
-        elif action == ACTION_START_LOOP_REC and not self.loop_recording:
+        if action == ACTION_START_LOOP_REC and not self.loop_recording:
             self.loop_recording = True
             if self.active_loop_index < 0 or self.loops[self.active_loop_index].has_recorded:
                 self.loops.insert(self.active_loop_index+1, Loop(self.loop_length))
                 self.active_loop_index += 1
-            print("starting recording")
         elif action == ACTION_STOP_LOOP_REC:
             self.loop_recording = False
             ## Manually request an image update so the background can change properly
             self.loops[self.active_loop_index].image_needs_update = True
-            print("stopping recording")
 
         elif action == ACTION_START_LOOP_PLAY and not self.loop_playing:
             self.loop_playing = True
-            print("starting playing")
         elif action == ACTION_STOP_LOOP_PLAY:
             self.loop_playing = False
-            print("stopping playing")
 
     def settle_to_volume(self):
         self.volume = (self.volume + self.adjusted_base_volume() * ARTICULATION_DECAY) / (ARTICULATION_DECAY + 1)

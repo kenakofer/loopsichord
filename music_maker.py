@@ -158,10 +158,13 @@ class MusicMaker:
                     self.audio_player.active_loop_index -= 1
 
         ## Articulating and continuing a note playing
-        if self.b_left and not self.audio_player.playing and not EVENT_ARTICULATE_NOTE in self.events:
-            self.events.add(EVENT_ARTICULATE_NOTE)
-        if self.b_left and self.audio_player.playing:
-            self.audio_player.settle_to_volume()
+        if self.b_left:
+            if not self.audio_player.playing:
+                self.audio_player.volume = ARTICULATION_FACTOR * self.audio_player.adjusted_base_volume()
+                self.audio_player.previous_volume = self.audio_player.volume
+                self.audio_player.playing=True
+            else:
+                self.audio_player.settle_to_volume()
         
         ## Allowing a note to fade away when not left clicking
         if not self.b_left:
@@ -202,7 +205,7 @@ class MusicMaker:
         if not last_b_middle:
             if is_key_mod(K_S, None):
                 self.pitch = self.mouse_pitch
-            elif (self.b_left or self.audio_player.volume == 0) and self.closest_pitch != self.pitch:
+            elif self.b_left or self.audio_player.volume == 0: 
                 self.pitch = self.closest_pitch
 
         ## Run events scheduled for the end of the step
