@@ -15,8 +15,13 @@ class Loop:
         self.image_needs_update = True
         self.color = LOOP_PITCH_COLOR
         self.overtones = MY_OVERTONES
-        self.horizontal_offset = 0 # Can be shifted left or right (modulo length) by any number of buffers
-        self.horizontal_offset = 0 # Can be entirely shifted in pitch up or down
+
+    def combine(self, other):
+        self.image_needs_update = True
+        for i in range(len(self.recorded_notes)):
+            self.recorded_notes[i].extend(other.recorded_notes[i])
+            self.recorded_notes[i].sort(key=lambda rn: rn.pitch, reverse=True) 
+            self.buffers[i] += other.buffers[i]
 
     def toggle_mute(self):
         self.image_needs_update = True

@@ -126,6 +126,14 @@ class MusicMaker:
             self.audio_player.active_loop_index += 1
             self.audio_player.active_loop_index %= len(self.audio_player.loops)
 
+        ## Combine this loop with the one below it 
+        if (keys[PLUS] and not last_keys[PLUS]) or (keys[pygame.K_KP_PLUS] and not last_keys[pygame.K_KP_PLUS]):
+            loop_count = len(self.audio_player.loops)
+            index = self.audio_player.active_loop_index
+            if loop_count > 1 and index < loop_count-1:
+                self.audio_player.loops[index].combine(self.audio_player.loops[index+1])
+                del self.audio_player.loops[index+1]
+
         ## Delete the current loop with backspace or delete
         if (is_key_mod(BACKSPACE, None) and not last_keys[BACKSPACE]) or (is_key_mod(DELETE, None) and not last_keys[DELETE]):
             if self.audio_player.active_loop_index >= 0:
