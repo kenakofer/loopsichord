@@ -82,8 +82,9 @@ class Loop:
             rnx = rn.buffer_index * rnw
             rny = (pitch_range[1] - rn.pitch) / (pitch_range[1] - pitch_range[0]) * h
             rnh = max(1,int(rn.volume*20*self.volume))
-            pygame.draw.rect(screen, (100,0,0), (rnx, rny-rnh-1, rnw+1, rnh+2))
-            pygame.draw.rect(screen, self.color, (rnx, rny-rnh, rnw+1, rnh))
+            pygame.draw.rect(screen, (0,0,0), (rnx, rny-rnh-1, rnw+1, rnh+2))
+            color = self.color if self.muted else get_color(rn.pitch, SATURATED_COLORS)
+            pygame.draw.rect(screen, color, (rnx, rny-rnh, rnw+1, rnh))
         return screen
 
     def add_recorded_note(self, index, pitch, volume, scale):

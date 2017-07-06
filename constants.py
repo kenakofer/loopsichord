@@ -39,29 +39,37 @@ NOTE_NAMES = ['A','Bb','B','C','Db','D','Eb','E','F','Gb','G','Ab']
 
 CHROMATIC_SCALE = list(range(0,12))
 
+METRONOME_RELATIVE_VOLUME = 5 ## Relative to VOLUME
+INACTIVE_NOTE_WIDTH = 3
+ACTIVE_NOTE_STRETCH = 80
+
 INACTIVE_COLORS = [
         (64,0,100), #A
         (70,0,70),
         (100,0,64),
-        (128,0,0), #C
+        (127,0,0), #C
         (100,64,0),
         (70,70,0),
         (64,100,0), 
-        (0,128,0),
+        (0,127,0),
         (0,100,64), #F
         (0,70,70),
         (0,64,100),
-        (0,0,128),
+        (0,0,127),
         ]
 
 ACTIVE_COLORS = [
         (c[0]+100, c[1]+100, c[2]+100) for c in INACTIVE_COLORS
         ]
 
+SATURATED_COLORS = [
+        (c[0]*2, c[1]*2, c[2]*2) for c in INACTIVE_COLORS
+        ]
+
 FREE_NOTE_COLOR = (150,150,150)
 ACTIVE_LOOP_OUTLINE_COLOR = (255,255,200)
 LOOP_BACK_COLOR = (50,50,50)
-LOOP_RECORDING_BACK_COLOR = (50,50,100)
+LOOP_RECORDING_BACK_COLOR = (0,0,80)
 LOOP_PITCH_COLOR = (255,0,0)
 LOOP_MUTED_PITCH_COLOR = (200,150,150)
 INSTRUCTIONS_BACK_COLOR = (50,50,80)
@@ -70,9 +78,18 @@ HORIZONTAL_ACTIVE_COLOR = (50,50,50)
 METRONOME_ACTIVE_COLOR = (255,255,255)
 METRONOME_INACTIVE_COLOR = (100,100,100)
 
-METRONOME_RELATIVE_VOLUME = 5 ## Relative to VOLUME
-INACTIVE_NOTE_WIDTH = 3
-ACTIVE_NOTE_STRETCH = 80
+def get_color(scale_index, spectrum):
+    scale_index %= 12
+    if scale_index == int(scale_index):
+        return spectrum[int(scale_index)]
+    else:
+        color1 = spectrum[int(scale_index)]
+        color2 = spectrum[int(scale_index+1)%12]
+        weight2 = scale_index % 1
+        weight1 = 1 - weight2
+        r,g,b = (color1[0]*weight1 + color2[0]*weight2, color1[1]*weight1 + color2[1]*weight2, color1[2]*weight1 + color2[2]*weight2)
+        return (int(r), int(g), int(b))
+
 
 ACTION_CHANGE_NOTE = 0
 ACTION_RELEASE_NOTE = 1
@@ -88,6 +105,9 @@ NEXT_MEASURE = 102
 
 BEGIN_STEP = 200
 END_STEP = 201
+
+
+
 
 EVENT_CHANGE_NOTE = (ACTION_CHANGE_NOTE, NEXT_BUFFER, BEGIN_STEP)
 EVENT_RELEASE_NOTE = (ACTION_RELEASE_NOTE, NEXT_BUFFER, BEGIN_STEP)
