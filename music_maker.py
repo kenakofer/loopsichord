@@ -128,11 +128,10 @@ class MusicMaker:
 
         ## Move the active loop indicator up and down
         if is_key_mod(UP, None) and not last_keys[UP]:
-            self.audio_player.active_loop_index -= 1
-            self.audio_player.active_loop_index %= len(self.audio_player.loops)
+            self.audio_player.active_loop_index = self.audio_player.active_loop_index % (len(self.audio_player.loops)+1) - 1
         if is_key_mod(DOWN, None) and not last_keys[DOWN]:
-            self.audio_player.active_loop_index += 1
-            self.audio_player.active_loop_index %= len(self.audio_player.loops)
+            self.audio_player.active_loop_index += 2
+            self.audio_player.active_loop_index = self.audio_player.active_loop_index % (len(self.audio_player.loops)+1) - 1
 
         ## Move the active loop up and down in the lineup
         if self.audio_player.active_loop_index >= 0:
@@ -149,11 +148,12 @@ class MusicMaker:
 
         ## Combine this loop with the one below it 
         if (keys[PLUS] and not last_keys[PLUS]) or (keys[pygame.K_KP_PLUS] and not last_keys[pygame.K_KP_PLUS]):
-            loop_count = len(self.audio_player.loops)
-            index = self.audio_player.active_loop_index
-            if loop_count > 1 and index < loop_count-1:
-                self.audio_player.loops[index].combine(self.audio_player.loops[index+1])
-                del self.audio_player.loops[index+1]
+            if self.audio_player.active_loop_index >= 0:
+                loop_count = len(self.audio_player.loops)
+                index = self.audio_player.active_loop_index
+                if loop_count > 1 and index < loop_count-1:
+                    self.audio_player.loops[index].combine(self.audio_player.loops[index+1])
+                    del self.audio_player.loops[index+1]
 
         ## Delete the current loop with backspace or delete
         if (is_key_mod(BACKSPACE, None) and not last_keys[BACKSPACE]) or (is_key_mod(DELETE, None) and not last_keys[DELETE]):
@@ -244,7 +244,7 @@ class MusicMaker:
             self.draw_scale_activity(s, y, self.scale is s)
             y += self.scale_height
         ## Draw metronome
-        self.metronome.paint_self(self.screen, self.audio_player.loop_buffer_index)
+        self.metronome.paint_self(self.screen, self.audio_player.loop_buffer_index, self.audio_player.active_loop_index == -1)
         ## Draw the loops
         y = 60
         x = 10
