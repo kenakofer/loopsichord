@@ -37,14 +37,14 @@ If the audio is consistently jittery, try closing some programs on your computer
  - Save the loops to a wav file (channels saved individually for easier external editing)
  - Unlimited tracks with negligible additional system load
  - Thumbnails of the volumes and pitches within each track
-### Backend:
+### Other:
+ - Instruction menu on startup or keypress
  - Uses buffering of images wherever possible to reduce CPU load
  - ```constants.py``` contains many configurable options for the UI and backend
  
  ---
  
 ## Features that will be added soon:
- - Instruction menu on startup or keypress
  - Adjustable harmonics
  - Adjustable metronome settings
  - Adjustable loop length

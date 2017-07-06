@@ -6,6 +6,7 @@ import math
 import numpy as np
 from copy import deepcopy
 from audio import *
+from instructions_panel import *
 
 class MusicMaker:
 
@@ -24,6 +25,8 @@ class MusicMaker:
         self.scale_height = SCREEN_DIM[1] / len(self.using_scales)
         self.background = None
         self.background_needs_update = True
+        self.instructions = InstructionsPanel(SCREEN_DIM[0] - 380, 10, 370, SCREEN_DIM[1]-20)
+        self.show_instructions = True
         self.audio_player = None
         self.audio_player = AudioPlayer(self)
         self.audio_player.run()
@@ -169,13 +172,17 @@ class MusicMaker:
         self.scale = SCALES[self.scale_index]
 
         ## Temporarily align to the chromatic scale on the current scale
-        if (is_key_mod(K_C, None)):
+        if (self.b_right):
             self.scale = CHROMATIC_SCALE
 
         ## Center scales around mouse
         if self.b_middle and not last_b_middle:
             self.background_needs_update = True
             self.center_scales_around(m_x, m_y)
+
+        ## Show and hide the instructions (really for QUESTION_MARK, but SLASH is more accepting)
+        if (keys[SLASH] and not last_keys[SLASH]):
+            self.show_instructions = not self.show_instructions
 
         #######################
         ## Pitch decisionmaking
@@ -193,7 +200,7 @@ class MusicMaker:
 
         ## Decide whether to align to the closest pitch, or use the mouse pitch
         if not last_b_middle:
-            if self.b_right:
+            if is_key_mod(K_S, None):
                 self.pitch = self.mouse_pitch
             elif (self.b_left or self.audio_player.volume == 0) and self.closest_pitch != self.pitch:
                 self.pitch = self.closest_pitch
@@ -219,9 +226,11 @@ class MusicMaker:
         pygame.mouse.set_pos(new_m_x, new_m_y)
 
     def paint_screen(self):
+        ## Draw the mostly unchanging buffered background
         if self.background == None or self.background_needs_update:
             self.background = self.redraw_background()
         self.screen.blit(self.background, (0,0))
+        ## Draw the active notes
         y=0
         notes = [l.recorded_notes[self.audio_player.loop_buffer_index] for l in self.audio_player.loops if not l.muted]
         self.recorded_notes_to_draw = [rn for sublist in notes for rn in sublist]
@@ -229,7 +238,9 @@ class MusicMaker:
             s = SCALES[i]
             self.draw_scale_activity(s, y, self.scale is s)
             y += self.scale_height
+        ## Draw metronome
         self.metronome.paint_self(self.screen, self.audio_player.loop_buffer_index)
+        ## Draw the loops
         y = 60
         x = 10
         w = self.metronome.measure_len * VISUAL_BUFFER_WIDTH
@@ -239,6 +250,12 @@ class MusicMaker:
             loop = self.audio_player.loops[i]
             loop.paint_self(self.screen, (x,y,w,h), i==self.audio_player.active_loop_index, self.audio_player.loop_recording)
             y += h + v_margin
+        ## Draw the instruction panel
+        if self.show_instructions:
+            self.instructions.paint_self(self.screen)
+        else:
+            self.instructions.paint_minimized_self(self.screen)
+
         pygame.display.flip()
     
     '''

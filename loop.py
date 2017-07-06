@@ -68,7 +68,7 @@ class Loop:
     def redraw_self(self, w, h, recording):
         self.image_needs_update = False
         screen = pygame.Surface((w,h))
-        screen.fill((50,50,50)) if not recording else screen.fill((50,50,150))
+        screen.fill(LOOP_BACK_COLOR) if not recording else screen.fill(LOOP_RECORDING_BACK_COLOR)
         flat_notes = [rn for sublist in self.recorded_notes for rn in sublist]
         if len(flat_notes) == 0:
             return screen
