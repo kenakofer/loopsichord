@@ -29,14 +29,15 @@ If the audio is consistently jittery, try closing some programs on your computer
 ### Loop tracks:
  - Enable/disable recording to a new or existing loop track
  - Enable/disable playing of recorded tracks individually or globally (with visual reenactment as well)
- - Adjust volume of tracks
- - Shift tracks forward or backward by one beat or one sample buffer(~40th of a second)
- - Copy an existing track onto a new track
- - Record on top of an existing track
- - Delete a track
- - Save the loops to a wav file (channels saved individually for easier external editing)
+ - Adjust volume of track
+ - Shift track forward or backward by one beat or one sample buffer(~40th of a second)
+ - Copy existing track onto a new track (and mutes the copy)
+ - Combine multiple tracks into one
+ - Delete track
+ - Select a range of tracks to apply the above operations in bulk
  - Unlimited tracks with negligible additional system load
- - Thumbnails of the volumes and pitches within each track
+ - Color-coded thumbnails of the volumes and pitches within each track
+ - Save the tracks to a wav file (channels are saved individually for easier external editing)
 ### Other:
  - Instruction menu on startup or keypress
  - Adjustable metronome settings (before loops are present)
@@ -47,7 +48,7 @@ If the audio is consistently jittery, try closing some programs on your computer
  
 ## Features that will be added soon:
  - Adjustable harmonics
- - Adjustable loop length
+ - Adjustable loop length after loops exist
  - Optional beat alignment to assist with rhythmic precision (quantizing)
  - Swapping custom scales in and out of the UI (e.g. whole tone, harmonic minor)
  - Loading previously saved loop tracks
