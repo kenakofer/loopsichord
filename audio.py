@@ -15,7 +15,7 @@ class AudioPlayer:
         self.metronome = self.music_maker.metronome
         self.percent_through_period = 0
         self.callback_flag = pa.paContinue
-        self.active_loop_index = -1
+        self.active_loops = [-1]
         self.loops = []
         self.loop_buffer_index = 0
         self.previous_volume = 0
@@ -83,7 +83,8 @@ class AudioPlayer:
             ## Save the new samples to the active loop
             if self.loop_recording:
                 if self.volume > 0:
-                    active_loop = self.loops[self.active_loop_index]
+                    assert len(self.active_loops) == 1
+                    active_loop = self.loops[self.active_loops[0]]
                     active_loop.buffers[self.loop_buffer_index] += new_samples
                     active_loop.add_recorded_note(self.loop_buffer_index, self.music_maker.pitch, self.volume, self.music_maker.scale)
                     active_loop.has_recorded = True
@@ -102,13 +103,15 @@ class AudioPlayer:
     def do_action(self, action):
         if action == ACTION_START_LOOP_REC and not self.loop_recording:
             self.loop_recording = True
-            if self.active_loop_index < 0 or self.loops[self.active_loop_index].has_recorded:
-                self.loops.insert(self.active_loop_index+1, Loop(self.metronome.measure_len))
-                self.active_loop_index += 1
+            self.active_loops = [self.active_loops[0]]
+            if self.active_loops[0] < 0 or self.loops[self.active_loops[0]].has_recorded:
+                self.loops.insert(self.active_loops[0]+1, Loop(self.metronome.measure_len))
+                self.active_loops = [self.active_loops[0]+1]
         elif action == ACTION_STOP_LOOP_REC:
+            assert len(self.active_loops) == 1
             self.loop_recording = False
             ## Manually request an image update so the background can change properly
-            self.loops[self.active_loop_index].image_needs_update = True
+            self.loops[self.active_loops[0]].image_needs_update = True
 
         elif action == ACTION_START_LOOP_PLAY and not self.loop_playing:
             self.loop_playing = True
