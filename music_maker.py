@@ -115,9 +115,9 @@ class MusicMaker:
                 self.audio_player.loops[self.audio_player.active_loop_index].toggle_mute()
 
             ## Increase and decrease volume of the active looop
-            if is_key_mod(UP, SHIFT):
+            if keys[EQUALS] or keys[PLUS] or keys[KP_PLUS]:
                 self.audio_player.loops[self.audio_player.active_loop_index].adjust_volume(.02)
-            if is_key_mod(DOWN, SHIFT):
+            if keys[MINUS] or keys[KP_MINUS]:
                 self.audio_player.loops[self.audio_player.active_loop_index].adjust_volume(-.02)
 
             ## Copy the active loop below it, and mute the copy
@@ -141,8 +141,8 @@ class MusicMaker:
                 loops[index], loops[other_index] = loops[other_index], loops[index]
                 self.audio_player.active_loop_index = other_index
 
-            ## Combine this loop with the one below it 
-            if (keys[PLUS] and not last_keys[PLUS]) or (keys[pygame.K_KP_PLUS] and not last_keys[pygame.K_KP_PLUS]):
+            ## Add this loop with the one below it 
+            if is_key_mod(K_A, None) and not last_keys[K_A]:
                 loop_count = len(self.audio_player.loops)
                 index = self.audio_player.active_loop_index
                 if loop_count > 1 and index < loop_count-1:

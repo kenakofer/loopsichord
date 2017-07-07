@@ -158,7 +158,12 @@ SHIFT   =pygame.KMOD_SHIFT
 BACKSPACE = pygame.K_BACKSPACE
 DELETE = pygame.K_DELETE
 ESCAPE = pygame.K_ESCAPE
+EQUALS = pygame.K_EQUALS
+EQUALS = pygame.K_EQUALS
 PLUS = pygame.K_PLUS
+KP_PLUS = pygame.K_KP_PLUS
+MINUS = pygame.K_MINUS
+KP_MINUS = pygame.K_KP_MINUS
 SLASH = pygame.K_SLASH
 
 def is_key_mod(key, mod=None):
