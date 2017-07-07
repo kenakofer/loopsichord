@@ -12,10 +12,10 @@ class AudioPlayer:
 
     def __init__(self, music_maker):
         self.music_maker = music_maker
+        self.metronome = self.music_maker.metronome
         self.percent_through_period = 0
         self.callback_flag = pa.paContinue
         self.active_loop_index = -1
-        self.loop_length = BUFFERS_PER_MEASURE
         self.loops = []
         self.loop_buffer_index = 0
         self.previous_volume = 0
@@ -72,7 +72,7 @@ class AudioPlayer:
 
             ## Increment the buffer counter whenever we are playing or recording
             self.loop_buffer_index += 1
-            self.loop_buffer_index %= self.loop_length
+            self.loop_buffer_index %= self.metronome.measure_len
 
             ## If playing loops, then add all the unmuted loops to the samples
             if self.loop_playing:
@@ -103,7 +103,7 @@ class AudioPlayer:
         if action == ACTION_START_LOOP_REC and not self.loop_recording:
             self.loop_recording = True
             if self.active_loop_index < 0 or self.loops[self.active_loop_index].has_recorded:
-                self.loops.insert(self.active_loop_index+1, Loop(self.loop_length))
+                self.loops.insert(self.active_loop_index+1, Loop(self.metronome.measure_len))
                 self.active_loop_index += 1
         elif action == ACTION_STOP_LOOP_REC:
             self.loop_recording = False

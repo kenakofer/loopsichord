@@ -114,17 +114,31 @@ class MusicMaker:
             self.audio_player.loops.insert(self.audio_player.active_loop_index+1, loop_copy)
             loop_copy.set_mute(True)
 
-        ## Move the active loop left/right by one beat (with wrapping)
-        if is_key_mod(LEFT, None) and not last_keys[LEFT]:
-            self.audio_player.loops[self.audio_player.active_loop_index].horizontal_shift(-1*self.metronome.beat_len)
-        if is_key_mod(RIGHT, None) and not last_keys[RIGHT]:
-            self.audio_player.loops[self.audio_player.active_loop_index].horizontal_shift(self.metronome.beat_len)
+        if self.audio_player.active_loop_index >= 0:
+            ## Move the active loop left/right by one beat (with wrapping)
+            if is_key_mod(LEFT, None) and not last_keys[LEFT]:
+                self.audio_player.loops[self.audio_player.active_loop_index].horizontal_shift(-1*self.metronome.beat_len)
+            if is_key_mod(RIGHT, None) and not last_keys[RIGHT]:
+                self.audio_player.loops[self.audio_player.active_loop_index].horizontal_shift(self.metronome.beat_len)
+            ## Move the active loop left/right by one buffer (with wrapping)
+            if is_key_mod(LEFT, SHIFT) and not last_keys[LEFT]:
+                self.audio_player.loops[self.audio_player.active_loop_index].horizontal_shift(-1)
+            if is_key_mod(RIGHT, SHIFT) and not last_keys[RIGHT]:
+                self.audio_player.loops[self.audio_player.active_loop_index].horizontal_shift(1)
+        else:
+            ##Only allow changes to the metronome when there are no loops:
+            if len(self.audio_player.loops) == 0:
+                ## Add or subtract from the metronome length
+                if is_key_mod(LEFT, None) and not last_keys[LEFT]:
+                    self.metronome.change_measure_length(-self.metronome.beats)
+                if is_key_mod(RIGHT, None) and not last_keys[RIGHT]:
+                    self.metronome.change_measure_length(self.metronome.beats)
+                ## Add or subtract from the metronome beat count
+                if is_key_mod(LEFT, SHIFT) and not last_keys[LEFT]:
+                    self.metronome.change_beat_count(-1)
+                if is_key_mod(RIGHT, SHIFT) and not last_keys[RIGHT]:
+                    self.metronome.change_beat_count(1)
 
-        ## Move the active loop left/right by one buffer (with wrapping)
-        if is_key_mod(LEFT, SHIFT) and not last_keys[LEFT]:
-            self.audio_player.loops[self.audio_player.active_loop_index].horizontal_shift(-1)
-        if is_key_mod(RIGHT, SHIFT) and not last_keys[RIGHT]:
-            self.audio_player.loops[self.audio_player.active_loop_index].horizontal_shift(1)
 
         ## Move the active loop indicator up and down
         if is_key_mod(UP, None) and not last_keys[UP]:
@@ -248,7 +262,7 @@ class MusicMaker:
         ## Draw the loops
         y = 60
         x = 10
-        w = self.metronome.measure_len * VISUAL_BUFFER_WIDTH
+        w = self.metronome.measure_len * self.metronome.visual_buffer_width
         h = 30
         v_margin = 10
         for i in range(len(self.audio_player.loops)):

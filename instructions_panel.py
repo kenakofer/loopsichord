@@ -25,10 +25,14 @@ class InstructionsPanel:
         'Left/Right: Shift a track by beat',
         'Shift-Left/Right: Shift a track',
         '',
+        ' Metronome (when no loops are present)',
+        'Left/Right: Increase loop length',
+        'Shift-Left/Right: Increase loop beats',
+        '',
         ' Program',
         'Ctrl-S: Save the recorded tracks',
         'Esc: Quit',
-        '?: Show/hide instructions'
+        '?: Show/hide controls'
         ]
 
     def __init__(self, x, y, w,h):
@@ -43,7 +47,7 @@ class InstructionsPanel:
         screen.blit(self.image, (self.x, self.y))
 
     def redraw_self(self):
-        font = pygame.font.SysFont("Verdana", 14)
+        font = pygame.font.SysFont("Verdana", 12)
         screen = pygame.Surface((self.width, self.height))
         screen.fill(INSTRUCTIONS_BACK_COLOR)
         y=10
