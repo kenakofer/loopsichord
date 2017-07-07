@@ -96,7 +96,7 @@ class MusicMaker:
 
 
         ## If a loop is selected:
-        if self.audio_player.active_loop_index >= 0:
+        if self.audio_player.active_loop_index >= 0 and not self.audio_player.loop_recording:
 
             ## Move the active loop left/right by one beat (with wrapping)
             if is_key_mod(LEFT, None) and not last_keys[LEFT]:
@@ -172,11 +172,12 @@ class MusicMaker:
 
 
         ## Move the active loop indicator up and down
-        if is_key_mod(UP, None) and not last_keys[UP]:
-            self.audio_player.active_loop_index = self.audio_player.active_loop_index % (len(self.audio_player.loops)+1) - 1
-        if is_key_mod(DOWN, None) and not last_keys[DOWN]:
-            self.audio_player.active_loop_index += 2
-            self.audio_player.active_loop_index = self.audio_player.active_loop_index % (len(self.audio_player.loops)+1) - 1
+        if not self.audio_player.loop_recording:
+            if is_key_mod(UP, None) and not last_keys[UP]:
+                self.audio_player.active_loop_index = self.audio_player.active_loop_index % (len(self.audio_player.loops)+1) - 1
+            if is_key_mod(DOWN, None) and not last_keys[DOWN]:
+                self.audio_player.active_loop_index += 2
+                self.audio_player.active_loop_index = self.audio_player.active_loop_index % (len(self.audio_player.loops)+1) - 1
 
         ## Articulating and continuing a note playing
         if self.b_left:
