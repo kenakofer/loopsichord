@@ -94,35 +94,69 @@ class MusicMaker:
             else:
                 self.events.add(EVENT_START_LOOP_PLAY)
 
-        ## Mute and unmute the active loop
-        if is_key_mod(K_M, None) and not last_keys[K_M]:
-            self.audio_player.loops[self.audio_player.active_loop_index].toggle_mute()
 
-        ## Increase and decrease volume of the active looop
-        if is_key_mod(UP, SHIFT):
-            self.audio_player.loops[self.audio_player.active_loop_index].adjust_volume(.02)
-        if is_key_mod(DOWN, SHIFT):
-            self.audio_player.loops[self.audio_player.active_loop_index].adjust_volume(-.02)
-
-        ## Copy the active loop below it, and mute the copy
-        if is_key_mod(K_C, CTRL) and not last_keys[K_C]:
-            loop = self.audio_player.loops[self.audio_player.active_loop_index]
-            loop_copy = loop.get_copy()
-            loop_copy.set_mute(True)
-            self.audio_player.loops.insert(self.audio_player.active_loop_index+1, loop_copy)
-
+        ## If a loop is selected:
         if self.audio_player.active_loop_index >= 0:
+
             ## Move the active loop left/right by one beat (with wrapping)
             if is_key_mod(LEFT, None) and not last_keys[LEFT]:
                 self.audio_player.loops[self.audio_player.active_loop_index].horizontal_shift(-1*self.metronome.beat_len)
             if is_key_mod(RIGHT, None) and not last_keys[RIGHT]:
                 self.audio_player.loops[self.audio_player.active_loop_index].horizontal_shift(self.metronome.beat_len)
+
             ## Move the active loop left/right by one buffer (with wrapping)
             if is_key_mod(LEFT, SHIFT) and not last_keys[LEFT]:
                 self.audio_player.loops[self.audio_player.active_loop_index].horizontal_shift(-1)
             if is_key_mod(RIGHT, SHIFT) and not last_keys[RIGHT]:
                 self.audio_player.loops[self.audio_player.active_loop_index].horizontal_shift(1)
-        else:
+
+            ## Mute and unmute the active loop
+            if is_key_mod(K_M, None) and not last_keys[K_M]:
+                self.audio_player.loops[self.audio_player.active_loop_index].toggle_mute()
+
+            ## Increase and decrease volume of the active looop
+            if is_key_mod(UP, SHIFT):
+                self.audio_player.loops[self.audio_player.active_loop_index].adjust_volume(.02)
+            if is_key_mod(DOWN, SHIFT):
+                self.audio_player.loops[self.audio_player.active_loop_index].adjust_volume(-.02)
+
+            ## Copy the active loop below it, and mute the copy
+            if is_key_mod(K_C, CTRL) and not last_keys[K_C]:
+                loop = self.audio_player.loops[self.audio_player.active_loop_index]
+                loop_copy = loop.get_copy()
+                loop_copy.set_mute(True)
+                self.audio_player.loops.insert(self.audio_player.active_loop_index+1, loop_copy)
+
+            ## Move the active loop up and down in the lineup
+            other_index = -1
+            if is_key_mod(UP, CTRL) and not last_keys[UP]:
+                index = self.audio_player.active_loop_index
+                other_index=-1
+                other_index = (index-1)%len(self.audio_player.loops)
+            elif is_key_mod(DOWN, CTRL) and not last_keys[DOWN]:
+                index = self.audio_player.active_loop_index
+                other_index = (index+1)%len(self.audio_player.loops)
+            if other_index >= 0:
+                loops = self.audio_player.loops
+                loops[index], loops[other_index] = loops[other_index], loops[index]
+                self.audio_player.active_loop_index = other_index
+
+            ## Combine this loop with the one below it 
+            if (keys[PLUS] and not last_keys[PLUS]) or (keys[pygame.K_KP_PLUS] and not last_keys[pygame.K_KP_PLUS]):
+                loop_count = len(self.audio_player.loops)
+                index = self.audio_player.active_loop_index
+                if loop_count > 1 and index < loop_count-1:
+                    self.audio_player.loops[index].combine(self.audio_player.loops[index+1])
+                    del self.audio_player.loops[index+1]
+
+            ## Delete the current loop with backspace or delete
+            if (is_key_mod(BACKSPACE, None) and not last_keys[BACKSPACE]) or (is_key_mod(DELETE, None) and not last_keys[DELETE]):
+                del self.audio_player.loops[self.audio_player.active_loop_index]
+                if self.audio_player.active_loop_index >= len(self.audio_player.loops):
+                    self.audio_player.active_loop_index -= 1
+
+        else: ## Metronome selected (index -1)
+
             ##Only allow changes to the metronome when there are no loops:
             if len(self.audio_player.loops) == 0:
                 ## Add or subtract from the metronome length
@@ -143,35 +177,6 @@ class MusicMaker:
         if is_key_mod(DOWN, None) and not last_keys[DOWN]:
             self.audio_player.active_loop_index += 2
             self.audio_player.active_loop_index = self.audio_player.active_loop_index % (len(self.audio_player.loops)+1) - 1
-
-        ## Move the active loop up and down in the lineup
-        if self.audio_player.active_loop_index >= 0:
-            index = self.audio_player.active_loop_index
-            other_index=-1
-            if is_key_mod(UP, CTRL) and not last_keys[UP]:
-                other_index = (index-1)%len(self.audio_player.loops)
-            elif is_key_mod(DOWN, CTRL) and not last_keys[DOWN]:
-                other_index = (index+1)%len(self.audio_player.loops)
-            if other_index >= 0:
-                loops = self.audio_player.loops
-                loops[index], loops[other_index] = loops[other_index], loops[index]
-                self.audio_player.active_loop_index = other_index
-
-        ## Combine this loop with the one below it 
-        if (keys[PLUS] and not last_keys[PLUS]) or (keys[pygame.K_KP_PLUS] and not last_keys[pygame.K_KP_PLUS]):
-            if self.audio_player.active_loop_index >= 0:
-                loop_count = len(self.audio_player.loops)
-                index = self.audio_player.active_loop_index
-                if loop_count > 1 and index < loop_count-1:
-                    self.audio_player.loops[index].combine(self.audio_player.loops[index+1])
-                    del self.audio_player.loops[index+1]
-
-        ## Delete the current loop with backspace or delete
-        if (is_key_mod(BACKSPACE, None) and not last_keys[BACKSPACE]) or (is_key_mod(DELETE, None) and not last_keys[DELETE]):
-            if self.audio_player.active_loop_index >= 0:
-                del self.audio_player.loops[self.audio_player.active_loop_index]
-                if self.audio_player.active_loop_index >= len(self.audio_player.loops):
-                    self.audio_player.active_loop_index -= 1
 
         ## Articulating and continuing a note playing
         if self.b_left:
