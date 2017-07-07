@@ -107,12 +107,9 @@ class MusicMaker:
         ## Copy the active loop below it, and mute the copy
         if is_key_mod(K_C, CTRL) and not last_keys[K_C]:
             loop = self.audio_player.loops[self.audio_player.active_loop_index]
-            image = loop.image
-            loop.image=None
-            loop_copy = deepcopy(loop)
-            loop.image = image
-            self.audio_player.loops.insert(self.audio_player.active_loop_index+1, loop_copy)
+            loop_copy = loop.get_copy()
             loop_copy.set_mute(True)
+            self.audio_player.loops.insert(self.audio_player.active_loop_index+1, loop_copy)
 
         if self.audio_player.active_loop_index >= 0:
             ## Move the active loop left/right by one beat (with wrapping)

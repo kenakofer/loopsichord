@@ -1,5 +1,6 @@
 import numpy as np
 from constants import *
+from copy import deepcopy
 
 
 class Loop:
@@ -91,6 +92,15 @@ class Loop:
         self.image_needs_update = True
         self.recorded_notes[index].append(RecordedNote(index, pitch, volume, scale, self))
         self.recorded_notes[index].sort(key=lambda rn: rn.pitch, reverse=True) 
+
+    def get_copy(self):
+        copy = deepcopy(self)
+        copy.image = None
+        copy.image_needs_update = True
+        return copy
+
+    def __getstate__(self):
+      return dict((k, v) for (k, v) in self.__dict__.items() if not type(v) == pygame.Surface )
         
 
     '''
