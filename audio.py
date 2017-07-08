@@ -136,6 +136,9 @@ class AudioPlayer:
     def decrease_volume(self):
         self.base_volume *= .9
 
+    def multiply_tracks(self, num):
+        pass
+
     def write_loop(self, filename, frame_rate=44100, sample_width=4, volume_adjustment=.8):
         ## Filter out loops which haven't been used
         save_loops = list(filter(lambda l: l.has_recorded, self.loops))

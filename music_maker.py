@@ -25,8 +25,7 @@ class MusicMaker:
         self.scale_height = SCREEN_DIM[1] / len(self.using_scales)
         self.background = None
         self.background_needs_update = True
-        self.instructions = InstructionsPanel(SCREEN_DIM[0] - 380, 10, 370, SCREEN_DIM[1]-20)
-        self.show_instructions = True
+        self.instructions = InstructionsPanel()
         self.audio_player = None
         self.audio_player = AudioPlayer(self)
         self.audio_player.run()
@@ -193,6 +192,11 @@ class MusicMaker:
             if is_key_mod(DOWN, SHIFT) and not last_keys[DOWN] and self.audio_player.active_loops[0] >= 0 and self.audio_player.active_loops[-1] < len(self.audio_player.loops) - 1:
                 self.audio_player.active_loops.append(self.audio_player.active_loops[-1]+1)
 
+            ## Multiply metronome and loops a given number of times
+            for num in range(0,10):
+                if is_key_mod(NUMS[num], None) and not last_keys[NUMS[num]]:
+                    self.audio_player.multiply_tracks(num)
+
 
         ## Articulating and continuing a note playing
         if self.b_left:
@@ -217,7 +221,7 @@ class MusicMaker:
 
         ## Show and hide the instructions (really for QUESTION_MARK, but SLASH is more accepting)
         if (keys[SLASH] and not last_keys[SLASH]):
-            self.show_instructions = not self.show_instructions
+            self.instructions.minimized = not self.instructions.minimized
 
         #######################
         ## Pitch decisionmaking
@@ -288,10 +292,7 @@ class MusicMaker:
             loop.paint_self(self.screen, (x,y,w,h), i in self.audio_player.active_loops, self.audio_player.loop_recording)
             y += h + v_margin
         ## Draw the instruction panel
-        if self.show_instructions:
-            self.instructions.paint_self(self.screen)
-        else:
-            self.instructions.paint_minimized_self(self.screen)
+        self.instructions.paint_self(self.screen)
 
         pygame.display.flip()
     
