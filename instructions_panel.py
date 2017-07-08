@@ -67,7 +67,8 @@ class InstructionsPanel:
                 control_image = font.render(control, 1, INSTRUCTIONS_FORE_COLOR, INSTRUCTIONS_BACK_COLOR)
                 effect_image = font.render(effect, 1, INSTRUCTIONS_FORE_COLOR, INSTRUCTIONS_BACK_COLOR)
                 screen.blit(control_image, (x,y))
-                pygame.draw.rect(screen, INSTRUCTIONS_FORE_COLOR, (x-4,y+1,control_image.get_width()+8, control_image.get_height()), 1)
+                InstructionsPanel.draw_button(screen, INSTRUCTIONS_FORE_COLOR, (x-4,y+1,control_image.get_width()+8, control_image.get_height()), 1)
+                #pygame.draw.rect(screen, INSTRUCTIONS_FORE_COLOR, (x-4,y+1,control_image.get_width()+8, control_image.get_height()), 1)
                 screen.blit(effect_image, (x + 135,y))
                 y+=effect_image.get_height()+3
             elif line == '\n':
@@ -86,6 +87,20 @@ class InstructionsPanel:
     def paint_minimized_self(self, screen):
         screen.blit(self.minimized_image, self.closed_bounds[:2])
 
+    def draw_button(screen, color, area, depth):
+        (fx1, fx2, fy1, fy2) = (area[0], area[0]+area[2]-1, area[1], area[1]+area[3]-1)
+        (bx1, bx2, by1, by2) = (fx1-depth, fx2-depth, fy1-depth, fy2-depth)
+        pygame.draw.rect(screen, color, area, 1)
+        ## Draw the slanted lines
+        pygame.draw.line(screen, color, (fx1, fy1), (bx1, by1), 1)
+        pygame.draw.line(screen, color, (fx2, fy1), (bx2, by1), 1)
+        pygame.draw.line(screen, color, (fx1, fy2), (bx1, by2), 1)
+        ## Draw the straight lines
+        pygame.draw.line(screen, color, (bx1, by1), (bx1, by2), 1)
+        pygame.draw.line(screen, color, (bx1, by1), (bx2, by1), 1)
+
+
+
     def redraw_minimized_self(self):
         font = pygame.font.SysFont("Verdana", 16)
         control, effect = self.minimized_instruction_string.split(':')
@@ -94,7 +109,7 @@ class InstructionsPanel:
         screen = pygame.Surface(self.closed_bounds[2:])
         screen.fill(INSTRUCTIONS_BACK_COLOR)
         screen.blit(control_image, (10,10))
-        pygame.draw.rect(screen, INSTRUCTIONS_FORE_COLOR, (10-4,10,control_image.get_width()+8, control_image.get_height()+1), 1)
+        InstructionsPanel.draw_button(screen, INSTRUCTIONS_FORE_COLOR, (10-4,10,control_image.get_width()+8, control_image.get_height()+1), 1)
         screen.blit(effect_image, (60,10))
         return screen
 
