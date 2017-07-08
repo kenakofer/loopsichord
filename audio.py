@@ -136,7 +136,31 @@ class AudioPlayer:
     def decrease_volume(self):
         self.base_volume *= .9
 
+    ## Duplicate the metronome and active loops
     def multiply_tracks(self, num):
+        num = int(num)
+        prior_length = self.metronome.measure_len
+        added = prior_length * (num-1)
+        self.metronome.change_measure_length(added)
+        self.metronome.change_beat_count(self.metronome.beats * (num-1))
+        new_loops = []
+        for i,loop in enumerate(self.loops):
+            loop.buffers.extend([np.zeros(BUFFER_SIZE).astype(np.float32) for i in range(added)])
+            loop.recorded_notes.extend([[]]*added)
+            loop.image_needs_update = True
+            if i in self.active_loops:
+                for c in range(num-1):
+                    loop_copy = loop.get_copy()
+                    loop_copy.horizontal_shift((c+1)*prior_length)
+                    new_loops.append(loop_copy)
+        for l in new_loops:
+            self.loops.append(l)
+        if len(new_loops) > 0:
+            self.active_loops = [i+len(self.active_loops) for i in self.active_loops]
+
+
+
+
         pass
 
     def write_loop(self, filename, frame_rate=44100, sample_width=4, volume_adjustment=.8):

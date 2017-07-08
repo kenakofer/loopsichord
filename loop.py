@@ -6,15 +6,13 @@ from copy import deepcopy
 class Loop:
 
     def __init__(self, length):
-        self.length = length # Length in number of buffers
-        self.buffers = [np.zeros(BUFFER_SIZE) for i in range(self.length)]
-        self.recorded_notes = [[] for i in range(self.length)]
+        self.buffers = [np.zeros(BUFFER_SIZE) for i in range(length)]
+        self.recorded_notes = [[] for i in range(length)]
         self.volume = 1
         self.has_recorded = False # Flag for if anything has recorded to this loop
         self.muted = False
         self.image = None
         self.image_needs_update = True
-        self.color = LOOP_PITCH_COLOR
         self.overtones = MY_OVERTONES
 
     def combine(self, other):
@@ -27,13 +25,11 @@ class Loop:
     def toggle_mute(self):
         self.image_needs_update = True
         self.muted = not self.muted
-        self.color = LOOP_PITCH_COLOR if not self.muted else LOOP_MUTED_PITCH_COLOR
         return self.muted
 
     def set_mute(self, on_off):
         self.image_needs_update = True
         self.muted = on_off
-        self.color = LOOP_PITCH_COLOR if not self.muted else LOOP_MUTED_PITCH_COLOR
         return self.muted
 
     def adjust_volume(self, volume_adjustment):
@@ -52,7 +48,7 @@ class Loop:
         self.recorded_notes = self.recorded_notes[slice_at:] + self.recorded_notes[:slice_at]
         for rn in [rn for sublist in self.recorded_notes for rn in sublist]:
             rn.buffer_index -= slice_at
-            rn.buffer_index %= self.length
+            rn.buffer_index %= len(self.buffers)
 
     def pitch_shift(self):
         # TODO for all RecordedNotes, change pitch, recalculate
@@ -84,13 +80,13 @@ class Loop:
         pitch_range[1] += 10
         if  pitch_range[1] - pitch_range[0] < 20:
             pitch_range[1] = pitch_range[0] + 20
-        rnw = w / self.length
+        rnw = w / len(self.buffers)
         for rn in flat_notes:
             rnx = rn.buffer_index * rnw
             rny = (pitch_range[1] - rn.pitch) / (pitch_range[1] - pitch_range[0]) * h
             rnh = max(1,int(rn.volume*20*self.volume))
             pygame.draw.rect(screen, (0,0,0), (rnx, rny-rnh-1, rnw+1, rnh+2))
-            color = self.color if self.muted else get_color(rn.pitch, SATURATED_COLORS)
+            color = LOOP_MUTED_PITCH_COLOR if self.muted else get_color(rn.pitch, SATURATED_COLORS)
             pygame.draw.rect(screen, color, (rnx, rny-rnh, rnw+1, rnh))
         return screen
 

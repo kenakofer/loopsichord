@@ -32,9 +32,10 @@ If the audio is consistently jittery, try closing some programs on your computer
  - Adjust volume of track
  - Shift track forward or backward by one beat or one sample buffer(~40th of a second)
  - Copy existing track onto a new track (and mutes the copy)
+ - Multiply loop length while copying a track
  - Combine multiple tracks into one
  - Delete track
- - Select a range of tracks to apply the above operations in bulk
+ - Select a range of tracks to apply the above operations at once
  - Unlimited tracks with negligible additional system load
  - Color-coded thumbnails of the volumes and pitches within each track
  - Save the tracks to a wav file (channels are saved individually for easier external editing)

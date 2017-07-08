@@ -26,9 +26,10 @@ class InstructionsPanel:
         'Left/Right: Shift track(s) by beat',
         'Shift-Left/Right: Shift track(s)',
         '\n',
-        'Metronome (when no track present)',
+        'Metronome',
         'Left/Right: Increase track length',
         'Shift-Left/Right: Increase track beats',
+        '2-9: Multiply track(s)',
         '',
         'Program',
         'Ctrl-S: Save the recorded tracks',
@@ -98,8 +99,6 @@ class InstructionsPanel:
         ## Draw the straight lines
         pygame.draw.line(screen, color, (bx1, by1), (bx1, by2), 1)
         pygame.draw.line(screen, color, (bx1, by1), (bx2, by1), 1)
-
-
 
     def redraw_minimized_self(self):
         font = pygame.font.SysFont("Verdana", 16)
