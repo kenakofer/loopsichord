@@ -322,8 +322,9 @@ class MusicMaker:
                         l1 = get_font().render(NOTE_NAMES[p_i], 1, color)
                         self.screen.blit(l1, (x+10, y+self.scale_height-30))
         if is_active:
-            pygame.draw.line(self.screen, HORIZONTAL_ACTIVE_COLOR, (0,y), (SCREEN_DIM[0],y), 1) 
-            pygame.draw.line(self.screen, HORIZONTAL_ACTIVE_COLOR, (0,y+self.scale_height), (SCREEN_DIM[0],y+self.scale_height), 1) 
+            color = INACTIVE_COLORS[scale[0]]
+            pygame.draw.line(self.screen, color, (0,y), (SCREEN_DIM[0],y), 4) 
+            pygame.draw.line(self.screen, color, (0,y+self.scale_height), (SCREEN_DIM[0],y+self.scale_height), 4)
 
         ## The remaining pitches in notes_to_draw are not on a bar
         for rn in notes_to_draw:
@@ -348,6 +349,9 @@ class MusicMaker:
     Draws the inactive elements of one scale onto an image
     '''
     def draw_scale_background(self, screen, scale, y):
+        pygame.draw.rect(screen, DARK_COLORS[scale[0]], (0,y,SCREEN_DIM[0],self.scale_height))
+        pygame.draw.line(screen, SCALE_INACTIVE_SEPARATOR_COLOR, (0,y), (SCREEN_DIM[0],y), 1) 
+        pygame.draw.line(screen, SCALE_INACTIVE_SEPARATOR_COLOR, (0,y+self.scale_height), (SCREEN_DIM[0],y+self.scale_height), 1)
         for p in range(self.pitch_range[0], self.pitch_range[1]+1):
             p_i = p % 12
             if p_i in scale:
@@ -356,6 +360,7 @@ class MusicMaker:
                 if get_font() and p_i == scale[0]:
                     l1 = get_font().render(NOTE_NAMES[p_i], 1, INACTIVE_COLORS[p_i])
                     screen.blit(l1, (x+10, y+self.scale_height-30))
+
       
     def coord_to_pitch(self, y, coord=0, reverse=False):
         if reverse:
