@@ -146,7 +146,7 @@ class AudioPlayer:
         new_loops = []
         for i,loop in enumerate(self.loops):
             loop.buffers.extend([np.zeros(BUFFER_SIZE).astype(np.float32) for i in range(added)])
-            loop.recorded_notes.extend([[]]*added)
+            loop.recorded_notes.extend([[] for i in range(added)])
             loop.image_needs_update = True
             if i in self.active_loops:
                 for c in range(num-1):

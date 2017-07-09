@@ -17,9 +17,12 @@ class Loop:
 
     def combine(self, other):
         self.image_needs_update = True
-        for i in range(len(self.recorded_notes)):
-            self.recorded_notes[i].extend(other.recorded_notes[i])
-            self.recorded_notes[i].sort(key=lambda rn: rn.pitch, reverse=True) 
+        for i, l in enumerate(self.recorded_notes):
+            l.extend(other.recorded_notes[i])
+            for rn in l:
+                rn.loop = self
+                assert rn.buffer_index == i
+            l.sort(key=lambda rn: rn.pitch, reverse=True) 
             self.buffers[i] += other.buffers[i]
 
     def toggle_mute(self):
@@ -46,9 +49,11 @@ class Loop:
         slice_at = -1*amount
         self.buffers = self.buffers[slice_at:] + self.buffers[:slice_at]
         self.recorded_notes = self.recorded_notes[slice_at:] + self.recorded_notes[:slice_at]
-        for rn in [rn for sublist in self.recorded_notes for rn in sublist]:
-            rn.buffer_index -= slice_at
-            rn.buffer_index %= len(self.buffers)
+        for index, l in enumerate(self.recorded_notes):
+            for rn in l:
+                rn.buffer_index -= slice_at
+                rn.buffer_index %= len(self.buffers)
+                assert rn.buffer_index == index
 
     def pitch_shift(self):
         # TODO for all RecordedNotes, change pitch, recalculate
