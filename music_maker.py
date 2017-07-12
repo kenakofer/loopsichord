@@ -156,10 +156,24 @@ class MusicMaker:
                     self.audio_player.loops[i].combine(self.audio_player.loops[other])
                     del self.audio_player.loops[other]
 
-            ## Recalculate the selected loops 
-            if is_key_mod(K_T, None) and not last_keys[K_T]:
+            ## Pitch shift the selected loops UP/DOWN
+            if is_key_mod(UP, CTRL) and is_key_mod(UP, SHIFT) and not last_keys[UP]:
                 for index in self.audio_player.active_loops:
-                    self.audio_player.loops[index].pitch_shift(.5)
+                    #Shift up one eighth of a tone
+                    self.audio_player.loops[index].pitch_shift(.25)
+            elif is_key_mod(UP, CTRL) and not last_keys[UP]:
+                for index in self.audio_player.active_loops:
+                    #Shift up one semitone
+                    self.audio_player.loops[index].pitch_shift(1)
+            elif is_key_mod(DOWN, CTRL) and is_key_mod(DOWN, SHIFT) and not last_keys[DOWN]:
+                for index in self.audio_player.active_loops:
+                    #Shift up one eighth of a tone
+                    self.audio_player.loops[index].pitch_shift(-.25)
+            elif is_key_mod(DOWN, CTRL) and not last_keys[DOWN]:
+                for index in self.audio_player.active_loops:
+                    #Shift up one semitone
+                    self.audio_player.loops[index].pitch_shift(-1)
+
 
             ## Delete the current loop with backspace or delete
             if (is_key_mod(BACKSPACE, None) and not last_keys[BACKSPACE]) or (is_key_mod(DELETE, None) and not last_keys[DELETE]):
@@ -192,9 +206,9 @@ class MusicMaker:
                 self.audio_player.active_loops = [ (self.audio_player.active_loops[-1]+2) % (len(self.audio_player.loops)+1) - 1 ]
 
             ## Select a range of loops
-            if is_key_mod(UP, SHIFT) and not last_keys[UP] and self.audio_player.active_loops[0] > 0:
+            if is_key_mod(UP, SHIFT) and not is_key_mod(UP, CTRL) and not last_keys[UP] and self.audio_player.active_loops[0] > 0:
                 self.audio_player.active_loops.insert(0, self.audio_player.active_loops[0]-1)
-            if is_key_mod(DOWN, SHIFT) and not last_keys[DOWN] and self.audio_player.active_loops[0] >= 0 and self.audio_player.active_loops[-1] < len(self.audio_player.loops) - 1:
+            if is_key_mod(DOWN, SHIFT) and not is_key_mod(DOWN, CTRL) and not last_keys[DOWN] and self.audio_player.active_loops[0] >= 0 and self.audio_player.active_loops[-1] < len(self.audio_player.loops) - 1:
                 self.audio_player.active_loops.append(self.audio_player.active_loops[-1]+1)
 
             ## Multiply metronome and loops a given number of times

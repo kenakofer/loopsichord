@@ -12,6 +12,16 @@ class InstructionsPanel:
         'Scroll: Adjust volume',
         'S: Use sliding pitches',
         '',
+        'Metronome',
+        'Left/Right: Increase track length',
+        'Shift-Left/Right: Increase track beats',
+        '2-9: Multiply track(s)',
+        '',
+        'Program',
+        'Ctrl-S: Save the recorded tracks',
+        'Esc: Quit',
+        '?: Hide this help menu',
+        '\n',
         'Loop tracks',
         'Space: HOLD to record',
         'Up/Down: Select a track',
@@ -22,19 +32,11 @@ class InstructionsPanel:
         '+/-: Adjust volume of track(s)',
         'Ctrl-C: Copy track(s)',
         'A: Add tracks together',
-        'Ctrl-Up/Down: Move track(s)',
+        'Alt-Up/Down: Move track(s)',
         'Left/Right: Shift track(s) by beat',
         'Shift-Left/Right: Shift track(s)',
-        '\n',
-        'Metronome',
-        'Left/Right: Increase track length',
-        'Shift-Left/Right: Increase track beats',
-        '2-9: Multiply track(s)',
-        '',
-        'Program',
-        'Ctrl-S: Save the recorded tracks',
-        'Esc: Quit',
-        '?: Hide this help menu'
+        'Ctrl-Up/Down: Pitch shift track(s)',
+        ' +Shift: By eighth tone',
         ]
 
     minimized_instruction_string = "?: Show/Hide controls"
@@ -73,7 +75,7 @@ class InstructionsPanel:
                 screen.blit(effect_image, (x + 135,y))
                 y+=effect_image.get_height()+3
             elif line == '\n':
-                x += 350
+                x += 370
                 y = 70
             elif line != '':
                 font = title_font if index==0 else header_font
@@ -82,7 +84,7 @@ class InstructionsPanel:
                 screen.blit(line_image, (x-5,y)) 
                 y+=line_image.get_height()+3
             else:
-                y+=15
+                y+=10
         return screen
 
     def paint_minimized_self(self, screen):

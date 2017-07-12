@@ -125,7 +125,6 @@ class Loop:
     modified to account for it
     '''
     def recalculate_buffers(self):
-        print('Recalculating buffers...')
         ## Zero out the buffers
         self.buffers = [np.zeros(BUFFER_SIZE) for i in range(len(self.buffers))]
         ## Remove all information that may have been generated in a previous run of recalculate_buffers
@@ -145,7 +144,6 @@ class Loop:
     '''
 
     def recalculate_recorded_note(self, rn):
-        print(rn)
         self.image_needs_update = True
         if rn.recalculated:
             return
