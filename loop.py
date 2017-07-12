@@ -14,6 +14,7 @@ class Loop:
         self.image = None
         self.image_needs_update = True
         self.overtones = MY_OVERTONES
+        self.previous_note = None
 
     def combine(self, other):
         self.image_needs_update = True
@@ -55,9 +56,11 @@ class Loop:
                 rn.buffer_index %= len(self.buffers)
                 assert rn.buffer_index == index
 
-    def pitch_shift(self):
-        # TODO for all RecordedNotes, change pitch, recalculate
-        assert False
+    def pitch_shift(self, pitch_change):
+        for index, l in enumerate(self.recorded_notes):
+            for rn in l:
+                rn.pitch += pitch_change
+        self.recalculate_buffers()
 
     def paint_self(self, screen, rect, is_active, is_recording):
         (x,y,w,h) = rect
@@ -98,7 +101,7 @@ class Loop:
     def add_recorded_note(self, index, pitch, volume, scale):
         self.image_needs_update = True
         # If a note was recorded last with index just before this one, assume it is the predecessor note
-        if self.previous_note.index == (index - 1)%len(self.buffers):
+        if self.previous_note != None and self.previous_note.buffer_index == (index - 1)%len(self.buffers):
             previous = self.previous_note
         else:
             previous = None
@@ -116,20 +119,56 @@ class Loop:
     def __getstate__(self):
       return dict((k, v) for (k, v) in self.__dict__.items() if not type(v) == pygame.Surface )
         
+    '''
+    This function erases and recomputes the buffers for this loop. This is useful for if certain properties of
+    the loop have changed, for example pitch offset, time stretch, etc, and the current buffers can't be accurately
+    modified to account for it
+    '''
+    def recalculate_buffers(self):
+        print('Recalculating buffers...')
+        ## Zero out the buffers
+        self.buffers = [np.zeros(BUFFER_SIZE) for i in range(len(self.buffers))]
+        ## Remove all information that may have been generated in a previous run of recalculate_buffers
+        for index, l in enumerate(self.recorded_notes):
+            for rn in l:
+                rn.percent_through_period = None
+                rn.recalculated = False
+        ## Go through recorded notes and readd them
+        for index, l in enumerate(self.recorded_notes):
+            for rn in l:
+                 self.recalculate_recorded_note(rn)
 
     '''
-    TODO maybe wait on this
-    def recalculate_buffers(self):
-        self.buffers = [np.zeros(BUFFER_SIZE) for i in range(self.length)]
-        percent_through_period = 0
-        for i_l in range(len(self.recorded_notes)):
-            previous = self.recorded_notes[(i-1)%self.length]
-            previous_volume = previous[0].volume
-            for rn in self.recorded_notes[i_l]:
-                freq = musical_pitch_to_hertz(rn.pitch)
-                samples, percent_through_period = AudioPlayer.sin(freq, sample_count=BUFFER_SIZE, fs=FS, volume=rn.volume, previous_volume=previous_volume percent_through_period=percent_through_period, overtones=self.overtones)
-                volume[rn.buffer_index] = rn.volume
+    Computes a note and adds it to the proper location in the buffers. If the note has a predecessor, and that predecessor's
+    percent through period has not been calculated, recalculate that note first
+    def recalculate_recorded_note(self, note):
     '''
+
+    def recalculate_recorded_note(self, rn):
+        print(rn)
+        self.image_needs_update = True
+        if rn.recalculated:
+            return
+        if rn.previous_note == None:
+            start = 0
+            prev_volume = rn.volume
+        else:
+            if not rn.previous_note.recalculated:
+                self.recalculate_recorded_note(rn.previous_note)
+            start = rn.previous_note.percent_through_period
+            prev_volume = rn.previous_note.volume
+        ## Generate a sin wave with overtones, starting at the percent through a period where the previous one left off. Return the samples and the percent through the period that the samples ends
+        freq = musical_pitch_to_hertz(rn.pitch)
+        samples, rn.percent_through_period = sin(freq, sample_count=BUFFER_SIZE, fs=FS, volume=rn.volume, previous_volume=prev_volume, percent_through_period=start, overtones = self.overtones)
+        self.buffers[rn.buffer_index] += samples
+        rn.recalculated = True
+
+    def test_recalculate_buffers(self):
+        before_buffers = deepcopy(self.buffers)
+        self.recalculate_buffers()
+        for i in range(len(self.buffers)):
+            assert all(self.buffers[i] == before_buffers[i])
+        print('test passed')
 
 class RecordedNote:
 

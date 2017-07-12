@@ -156,6 +156,11 @@ class MusicMaker:
                     self.audio_player.loops[i].combine(self.audio_player.loops[other])
                     del self.audio_player.loops[other]
 
+            ## Recalculate the selected loops 
+            if is_key_mod(K_T, None) and not last_keys[K_T]:
+                for index in self.audio_player.active_loops:
+                    self.audio_player.loops[index].pitch_shift(.5)
+
             ## Delete the current loop with backspace or delete
             if (is_key_mod(BACKSPACE, None) and not last_keys[BACKSPACE]) or (is_key_mod(DELETE, None) and not last_keys[DELETE]):
                 for i in self.audio_player.active_loops[::-1]:
