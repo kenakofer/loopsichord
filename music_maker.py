@@ -137,12 +137,12 @@ class MusicMaker:
             ## Move the active loops up and down in the lineup
             other_index = -1
             loops = self.audio_player.loops
-            if is_key_mod(UP, CTRL) and not last_keys[UP] and self.audio_player.active_loops[0] > 0:
+            if is_key_mod(UP, ALT) and not last_keys[UP] and self.audio_player.active_loops[0] > 0:
                 for index in self.audio_player.active_loops:
                     other_index = (index-1)%len(self.audio_player.loops)
                     loops[index], loops[other_index] = loops[other_index], loops[index]
                 self.audio_player.active_loops = [x-1 for x in self.audio_player.active_loops]
-            elif is_key_mod(DOWN, CTRL) and not last_keys[DOWN] and self.audio_player.active_loops[-1] < len(loops)-1:
+            elif is_key_mod(DOWN, ALT) and not last_keys[DOWN] and self.audio_player.active_loops[-1] < len(loops)-1:
                 for index in self.audio_player.active_loops[::-1]:
                     other_index = (index+1)%len(self.audio_player.loops)
                     loops[index], loops[other_index] = loops[other_index], loops[index]
@@ -308,7 +308,7 @@ class MusicMaker:
 
         notes_to_draw = [rn for rn in self.recorded_notes_to_draw if rn.scale==scale]
         if self.scale == scale:
-            notes_to_draw.append(RecordedNote(-1, self.pitch, self.audio_player.volume, self.scale, None, None))
+            notes_to_draw.append(RecordedNote(-1, self.pitch, self.audio_player.volume, None, self.scale, None, None))
 
         for p in range(self.pitch_range[0], self.pitch_range[1]+1):
             p_i = p % 12

@@ -67,7 +67,6 @@ class AudioPlayer:
                 new_samples, self.percent_through_period = sin(self.freq, sample_count=frame_count, fs=FS, volume=self.volume, previous_volume=self.previous_volume, percent_through_period=self.percent_through_period, overtones = MY_OVERTONES)
             else:
                 new_samples = np.zeros(frame_count).astype(np.float32)
-            self.previous_volume = self.volume
             samples = np.copy(new_samples)
 
             ## Increment the buffer counter whenever we are playing or recording
@@ -86,13 +85,14 @@ class AudioPlayer:
                     assert len(self.active_loops) == 1
                     active_loop = self.loops[self.active_loops[0]]
                     active_loop.buffers[self.loop_buffer_index] += new_samples
-                    active_loop.add_recorded_note(self.loop_buffer_index, self.music_maker.pitch, self.volume, self.music_maker.scale)
+                    active_loop.add_recorded_note(self.loop_buffer_index, self.music_maker.pitch, self.volume, self.previous_volume, self.music_maker.scale)
                     active_loop.has_recorded = True
             
             ## Generate metronome ticks
             if self.music_maker.metronome.is_beat(self.loop_buffer_index) and self.music_maker.metronome.sound:
                 samples += np.random.rand(frame_count).astype(np.float32) * VOLUME * METRONOME_RELATIVE_VOLUME
 
+            self.previous_volume = self.volume
 
             return (samples, self.callback_flag)
 

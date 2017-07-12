@@ -183,6 +183,7 @@ UP      =pygame.K_UP
 SPACE      =pygame.K_SPACE
 RETURN  =pygame.K_RETURN
 CTRL    =pygame.KMOD_CTRL
+ALT     =pygame.KMOD_ALT
 SHIFT   =pygame.KMOD_SHIFT
 BACKSPACE = pygame.K_BACKSPACE
 DELETE  = pygame.K_DELETE

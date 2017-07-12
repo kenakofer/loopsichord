@@ -98,14 +98,14 @@ class Loop:
             pygame.draw.rect(screen, color, (rnx, rny-rnh, rnw+1, rnh))
         return screen
 
-    def add_recorded_note(self, index, pitch, volume, scale):
+    def add_recorded_note(self, index, pitch, volume, previous_volume, scale):
         self.image_needs_update = True
         # If a note was recorded last with index just before this one, assume it is the predecessor note
         if self.previous_note != None and self.previous_note.buffer_index == (index - 1)%len(self.buffers):
             previous = self.previous_note
         else:
             previous = None
-        rn = RecordedNote(index, pitch, volume, scale, previous, self)
+        rn = RecordedNote(index, pitch, volume, previous_volume, scale, previous, self)
         self.recorded_notes[index].append(rn)
         self.recorded_notes[index].sort(key=lambda rn: rn.pitch, reverse=True) 
         self.previous_note = rn
@@ -151,15 +151,13 @@ class Loop:
             return
         if rn.previous_note == None:
             start = 0
-            prev_volume = rn.volume
         else:
             if not rn.previous_note.recalculated:
                 self.recalculate_recorded_note(rn.previous_note)
             start = rn.previous_note.percent_through_period
-            prev_volume = rn.previous_note.volume
         ## Generate a sin wave with overtones, starting at the percent through a period where the previous one left off. Return the samples and the percent through the period that the samples ends
         freq = musical_pitch_to_hertz(rn.pitch)
-        samples, rn.percent_through_period = sin(freq, sample_count=BUFFER_SIZE, fs=FS, volume=rn.volume, previous_volume=prev_volume, percent_through_period=start, overtones = self.overtones)
+        samples, rn.percent_through_period = sin(freq, sample_count=BUFFER_SIZE, fs=FS, volume=rn.volume, previous_volume=rn.previous_volume, percent_through_period=start, overtones = self.overtones)
         self.buffers[rn.buffer_index] += samples
         rn.recalculated = True
 
@@ -172,10 +170,11 @@ class Loop:
 
 class RecordedNote:
 
-    def __init__(self, buffer_index, pitch, volume, scale, previous, loop):
+    def __init__(self, buffer_index, pitch, volume, previous_volume, scale, previous, loop):
         self.buffer_index = buffer_index
         self.pitch = pitch
         self.volume = volume
+        self.previous_volume = previous_volume
         self.scale = scale
         self.previous_note = previous
         self.loop = loop
