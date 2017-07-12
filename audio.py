@@ -60,11 +60,11 @@ class AudioPlayer:
             ## Do step is where all the action happens
             self.music_maker.do_step()
 
-            self.freq = AudioPlayer.musical_pitch_to_hertz(self.music_maker.pitch)
+            self.freq = musical_pitch_to_hertz(self.music_maker.pitch)
 
             if self.volume != 0:
                 ## Generate a sin wave with overtones, starting at the percent through a period where the previous one left off. Return the samples and the percent through the period that the samples ends
-                new_samples, self.percent_through_period = AudioPlayer.sin(self.freq, sample_count=frame_count, fs=FS, volume=self.volume, previous_volume=self.previous_volume, percent_through_period=self.percent_through_period, overtones = MY_OVERTONES)
+                new_samples, self.percent_through_period = sin(self.freq, sample_count=frame_count, fs=FS, volume=self.volume, previous_volume=self.previous_volume, percent_through_period=self.percent_through_period, overtones = MY_OVERTONES)
             else:
                 new_samples = np.zeros(frame_count).astype(np.float32)
             self.previous_volume = self.volume
@@ -194,18 +194,3 @@ class AudioPlayer:
         for i in range(0,len(sample_channels)):
             ss[i::len(sample_channels)] = sample_channels[i]
         return ss
-
-    def musical_pitch_to_hertz(mp):
-        return (2**(mp/12)) * 440.0
-
-    def sin(freq, sample_count=FS, fs=FS, volume=1, previous_volume=1, percent_through_period=0, overtones=[1]):
-        count = sample_count
-        samples = [
-            (overtones[i] * np.sin(2*np.pi*np.arange(count)*freq*(i+1)/fs + percent_through_period*2*np.pi*(i+1))).astype(np.float32)
-            for i in range(len(overtones))
-            ]
-        new_ptp = (percent_through_period + count*freq/fs) % 1
-        samples = np.sum(samples, axis=0)
-        samples *= np.linspace(previous_volume, volume, num=count)
-        samples = samples.astype(np.float32)
-        return  samples, new_ptp

@@ -1,5 +1,6 @@
 import pygame
 import pygame.image
+import numpy as np
 import os
 
 
@@ -149,6 +150,21 @@ BEAT_LEN = 30
 
 BACK_COLOR = (20,20,20)
 
+
+def musical_pitch_to_hertz(mp):
+    return (2**(mp/12)) * 440.0
+
+def sin(freq, sample_count=FS, fs=FS, volume=1, previous_volume=1, percent_through_period=0, overtones=[1]):
+    count = sample_count
+    samples = [
+        (overtones[i] * np.sin(2*np.pi*np.arange(count)*freq*(i+1)/fs + percent_through_period*2*np.pi*(i+1))).astype(np.float32)
+        for i in range(len(overtones))
+        ]
+    new_ptp = (percent_through_period + count*freq/fs) % 1
+    samples = np.sum(samples, axis=0)
+    samples *= np.linspace(previous_volume, volume, num=count)
+    samples = samples.astype(np.float32)
+    return  samples, new_ptp
 
 def FOLLOW_LINE_COLOR(dist):
     dist = min(150, dist ** 2)
