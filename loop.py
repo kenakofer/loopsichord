@@ -97,8 +97,15 @@ class Loop:
 
     def add_recorded_note(self, index, pitch, volume, scale):
         self.image_needs_update = True
-        self.recorded_notes[index].append(RecordedNote(index, pitch, volume, scale, self))
+        # If a note was recorded last with index just before this one, assume it is the predecessor note
+        if self.previous_note.index == (index - 1)%len(self.buffers):
+            previous = self.previous_note
+        else:
+            previous = None
+        rn = RecordedNote(index, pitch, volume, scale, previous, self)
+        self.recorded_notes[index].append(rn)
         self.recorded_notes[index].sort(key=lambda rn: rn.pitch, reverse=True) 
+        self.previous_note = rn
 
     def get_copy(self):
         copy = deepcopy(self)
@@ -126,11 +133,12 @@ class Loop:
 
 class RecordedNote:
 
-    def __init__(self, buffer_index, pitch, volume, scale, loop):
+    def __init__(self, buffer_index, pitch, volume, scale, previous, loop):
         self.buffer_index = buffer_index
         self.pitch = pitch
         self.volume = volume
         self.scale = scale
+        self.previous_note = previous
         self.loop = loop
 
     def __repr__(self):

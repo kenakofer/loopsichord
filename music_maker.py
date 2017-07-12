@@ -303,7 +303,7 @@ class MusicMaker:
 
         notes_to_draw = [rn for rn in self.recorded_notes_to_draw if rn.scale==scale]
         if self.scale == scale:
-            notes_to_draw.append(RecordedNote(-1, self.pitch, self.audio_player.volume, self.scale, None))
+            notes_to_draw.append(RecordedNote(-1, self.pitch, self.audio_player.volume, self.scale, None, None))
 
         for p in range(self.pitch_range[0], self.pitch_range[1]+1):
             p_i = p % 12
