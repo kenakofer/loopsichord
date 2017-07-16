@@ -38,7 +38,8 @@ If the audio is consistently jittery, try closing some programs on your computer
  - Select a range of tracks to apply the above operations at once
  - Unlimited tracks with negligible additional system load
  - Color-coded thumbnails of the volumes and pitches within each track
- - Save the tracks to a wav file (channels are saved individually for easier external editing)
+ - Save and load the tracks in a .loops file
+ - Export the track samples to a wav file (channels are saved individually for easier external editing)
 ### Other:
  - Instruction menu on startup or keypress
  - Adjustable metronome settings (before loops are present)
@@ -52,7 +53,6 @@ If the audio is consistently jittery, try closing some programs on your computer
  - Adjustable loop length after loops exist
  - Optional beat alignment to assist with rhythmic precision (quantizing)
  - Swapping custom scales in and out of the UI (e.g. whole tone, harmonic minor)
- - Loading previously saved loop tracks
  - Loading samples from arbitrary wav data
 
 

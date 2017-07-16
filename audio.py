@@ -44,7 +44,7 @@ class AudioPlayer:
 
     def run(self):
         while self.stream.is_active():
-            ## Saving the loops must go here because opening a filedialog apparently must happen in the main thread
+            ## Saving and loading the loops must go here because opening a filedialog apparently must happen in the main thread for tkinter
             if keys and is_key_mod(K_S, CTRL):
                 filename = filedialog.asksaveasfilename(filetypes=(("Loopsichord Files", ".loops"),("Audio Files", ".wav"), ("All Files", "*.*")))
                 if filename:

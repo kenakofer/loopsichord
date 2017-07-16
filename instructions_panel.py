@@ -19,6 +19,7 @@ class InstructionsPanel:
         '',
         'Program',
         'Ctrl-S: Save the recorded tracks',
+        'Ctrl-O: Open saved tracks',
         'Esc: Quit',
         '?: Hide this help menu',
         '\n',
