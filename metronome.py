@@ -21,6 +21,20 @@ class Metronome:
         self.beat_len = self.measure_len // self.beats 
         return self.measure_len
 
+    def force_buffer_length(self, value):
+        for i in range(0, self.beats):
+            beats_to_try = self.beats+i
+            if value%beats_to_try == 0:
+                break
+            beats_to_try = self.beats-i
+            if value%beats_to_try == 0:
+                break
+        self.measure_len = value
+        self.beats = beats_to_try
+        assert self.measure_len % self.beats == 0
+        self.beat_len = self.measure_len // self.beats 
+        return self.measure_len
+
     def change_beat_count(self, change):
         self.beats += change
         self.measure_len -= self.measure_len % self.beats

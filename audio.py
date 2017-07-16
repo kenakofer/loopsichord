@@ -45,10 +45,20 @@ class AudioPlayer:
     def run(self):
         while self.stream.is_active():
             ## Saving the loops must go here because opening a filedialog apparently must happen in the main thread
-            if keys and pygame.key.get_mods() & CTRL and keys[K_S]:
-                filename = filedialog.asksaveasfilename(filetypes=(("Audio Files", ".wav"), ("All Files", "*.*")))
+            if keys and is_key_mod(K_S, CTRL):
+                filename = filedialog.asksaveasfilename(filetypes=(("Loopsichord Files", ".loops"),("Audio Files", ".wav"), ("All Files", "*.*")))
                 if filename:
-                    self.write_loop(filename)
+                    if filename.endswith('.loops'):
+                        Loop.save_loops(self.loops, filename=filename)
+                    elif filename.endswith('.wav'):
+                        self.write_loops(filename)
+            if keys and is_key_mod(K_O, CTRL):
+                filename = filedialog.askopenfilename(filetypes=(("Loopsichord Files", ".loops"), ("All Files", "*.*")))
+                if filename:
+                    if filename.endswith('.loops'):
+                        self.loops = Loop.load_loops(filename)
+                        self.metronome.force_buffer_length(len(self.loops[0].buffers))
+
             sleep(0.1)
         self.stream.close()
 
@@ -163,7 +173,7 @@ class AudioPlayer:
 
         pass
 
-    def write_loop(self, filename, frame_rate=44100, sample_width=4, volume_adjustment=.8):
+    def write_loops(self, filename, frame_rate=44100, sample_width=4, volume_adjustment=.8):
         ## Filter out loops which haven't been used
         save_loops = list(filter(lambda l: l.has_recorded, self.loops))
         ## Concatenate buffers within each loop

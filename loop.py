@@ -120,29 +120,31 @@ class Loop:
     def __getstate__(self):
       return dict((k, v) for (k, v) in self.__dict__.items() if not type(v) == pygame.Surface )
 
-    def save_loop(self, filename=None):
-        save_buffers = self.buffers[:]
-        self.buffers = [None for i in range(len(self.buffers))]
+    def save_loops(loop_list, filename=None):
+        loops = deepcopy(loop_list)
+        for l in loops:
+            l.buffers = [None for i in range(len(l.buffers))]
         if filename == None:
-            result = pickle.dumps(self)
-            self.buffers = save_buffers
+            result = pickle.dumps(loops)
             return result
         else:
-            pickle.dump(self, filename)
-            self.buffers = save_buffers
+            pickle.dump(loops, open(filename, 'wb'))
+            result = True
+        return result
 
 
-    def load_loop(string):
+    def load_loops(string):
         try:
             ## Try to interpret the string as a filename
-            loop = pickle.load(string)
+            loops = pickle.load(open(string, 'rb'))
         except Exception:
             ## Try to interpret the string as the saved bytes
-            loop = pickle.loads(string)
-        loop.recalculate_buffers()
-        loop.image = None
-        loop.image_needs_update = True
-        return loop
+            loops = pickle.loads(string)
+        for l in loops:
+            l.recalculate_buffers()
+            l.image = None
+            l.image_needs_update = True
+        return loops
         
     '''
     This function erases and recomputes the buffers for this loop. This is useful for if certain properties of
