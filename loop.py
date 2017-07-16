@@ -121,14 +121,18 @@ class Loop:
       return dict((k, v) for (k, v) in self.__dict__.items() if not type(v) == pygame.Surface )
 
     def save_loop(self, filename=None):
-        loop.buffers = None
+        save_buffers = self.buffers[:]
+        self.buffers = [None for i in range(len(self.buffers))]
         if filename == None:
-            return pickle.dumps(self)
+            result = pickle.dumps(self)
+            self.buffers = save_buffers
+            return result
         else:
             pickle.dump(self, filename)
+            self.buffers = save_buffers
 
 
-    def load_loop_object(string):
+    def load_loop(string):
         try:
             ## Try to interpret the string as a filename
             loop = pickle.load(string)
@@ -136,6 +140,7 @@ class Loop:
             ## Try to interpret the string as the saved bytes
             loop = pickle.loads(string)
         loop.recalculate_buffers()
+        loop.image = None
         loop.image_needs_update = True
         return loop
         

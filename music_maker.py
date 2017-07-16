@@ -7,6 +7,7 @@ import numpy as np
 from copy import deepcopy
 from audio import *
 from instructions_panel import *
+from loop import *
 
 class MusicMaker:
 
@@ -17,6 +18,7 @@ class MusicMaker:
         self.b_left = 0
         self.b_middle = 0
         self.b_right = 0
+        self.saved = None
         self.events = set()
         self.metronome = Metronome(BUFFERS_PER_MEASURE)
         self.is_measure = False
@@ -155,6 +157,20 @@ class MusicMaker:
                     other = self.audio_player.active_loops.pop()
                     self.audio_player.loops[i].combine(self.audio_player.loops[other])
                     del self.audio_player.loops[other]
+                    
+            ## test saving/loading the selected loops 
+            if is_key_mod(K_W, None) and not last_keys[K_W]:
+                for index in self.audio_player.active_loops:
+                    print('saving...')
+                    l = self.audio_player.loops[index]
+                    self.saved = l.save_loop()
+                    del self.audio_player.loops[index]
+                    print('done.')
+            if is_key_mod(K_R, None) and not last_keys[K_R] and self.saved:
+                print('loading...')
+                l = Loop.load_loop(self.saved)
+                self.audio_player.loops.insert(self.audio_player.active_loops[-1]+1, l)
+                print('done.')
 
             ## Pitch shift the selected loops UP/DOWN
             if is_key_mod(UP, CTRL) and is_key_mod(UP, SHIFT) and not last_keys[UP]:
