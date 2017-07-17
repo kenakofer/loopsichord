@@ -181,7 +181,7 @@ class Loop:
                 self.recalculate_recorded_note(rn.previous_note)
             start = rn.previous_note.percent_through_period
         ## Generate a sin wave with overtones, starting at the percent through a period where the previous one left off. Return the samples and the percent through the period that the samples ends
-        freq = musical_pitch_to_hertz(rn.pitch)
+        freq = musical_pitch_to_hertz(rn.pitch, justify_by_scale=rn.scale[0])
         samples, rn.percent_through_period = sin(freq, sample_count=BUFFER_SIZE, fs=FS, volume=rn.volume, previous_volume=rn.previous_volume, percent_through_period=start, overtones = self.overtones)
         self.buffers[rn.buffer_index] += samples
         rn.recalculated = True

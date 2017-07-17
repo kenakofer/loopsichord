@@ -44,6 +44,7 @@ If the audio is consistently jittery, try closing some programs on your computer
  - Instruction menu on startup or keypress
  - Adjustable metronome settings (before loops are present)
  - Uses buffering of images wherever possible to reduce CPU load
+ - Just and equal temperament capabilities
  - ```constants.py``` contains many configurable options for the UI and backend
  
  ---

@@ -56,7 +56,10 @@ class AudioPlayer:
                 filename = filedialog.askopenfilename(filetypes=(("Loopsichord Files", ".loops"), ("All Files", "*.*")))
                 if filename:
                     if filename.endswith('.loops'):
-                        self.loops = Loop.load_loops(filename)
+                        self.active_loops = [-1]
+                        self.loop_buffer_index = 0
+                        loop_list = Loop.load_loops(filename)
+                        self.loops = loop_list
                         self.metronome.force_buffer_length(len(self.loops[0].buffers))
 
             sleep(0.1)
@@ -70,7 +73,7 @@ class AudioPlayer:
             ## Do step is where all the action happens
             self.music_maker.do_step()
 
-            self.freq = musical_pitch_to_hertz(self.music_maker.pitch)
+            self.freq = musical_pitch_to_hertz(self.music_maker.pitch, justify_by_scale=self.music_maker.scale[0])
 
             if self.volume != 0:
                 ## Generate a sin wave with overtones, starting at the percent through a period where the previous one left off. Return the samples and the percent through the period that the samples ends

@@ -272,7 +272,7 @@ class MusicMaker:
                 if e[1] == NEXT_BUFFER or ( is_beat and e[1] == NEXT_BEAT ) or ( self.is_measure and e[1] == NEXT_MEASURE ):
                     self.audio_player.do_action(e[0])
                     self.events.remove(e)
-
+        
         self.paint_screen()
 
     def center_scales_around(self, m_x, m_y):
@@ -329,7 +329,7 @@ class MusicMaker:
         for p in range(self.pitch_range[0], self.pitch_range[1]+1):
             p_i = p % 12
             if p_i in scale:
-                x = self.pitch_to_coord(p, coord=0, reverse=False)
+                x = self.pitch_to_coord(p, coord=0, reverse=False, scale=scale[0])
                 color = ACTIVE_COLORS[p_i] if is_active and self.closest_pitch == p else INACTIVE_COLORS[p_i]
                 
                 ##Determine line width based on notes_to_draw:
@@ -376,7 +376,7 @@ class MusicMaker:
         for p in range(self.pitch_range[0], self.pitch_range[1]+1):
             p_i = p % 12
             if p_i in scale:
-                x = self.pitch_to_coord(p, coord=0, reverse=False)
+                x = self.pitch_to_coord(p, coord=0, reverse=False, scale=scale[0])
                 pygame.draw.line(screen, INACTIVE_COLORS[p_i], (x,y), (x,y+self.scale_height), INACTIVE_NOTE_WIDTH)
                 if get_font() and p_i == scale[0]:
                     l1 = get_font().render(NOTE_NAMES[p_i], 1, INACTIVE_COLORS[p_i])
@@ -389,7 +389,9 @@ class MusicMaker:
         else:
             return (self.pitch_range[1] - self.pitch_range[0]) / SCREEN_DIM[coord] * y + self.pitch_range[0]
 
-    def pitch_to_coord(self, p, coord=0, reverse=False):
+    def pitch_to_coord(self, p, coord=0, reverse=False, scale=None):
+        if scale != None:
+            p = pitch_to_just_pitch(p, scale)
         if reverse:
             return SCREEN_DIM[coord] - (p - self.pitch_range[0]) / (self.pitch_range[1] - self.pitch_range[0]) * SCREEN_DIM[coord]
         else:

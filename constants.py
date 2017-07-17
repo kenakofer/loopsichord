@@ -1,6 +1,7 @@
 import pygame
 import pygame.image
 import numpy as np
+from math import log
 import os
 
 
@@ -151,8 +152,28 @@ BEAT_LEN = 30
 BACK_COLOR = (20,20,20)
 
 
-def musical_pitch_to_hertz(mp):
-    return (2**(mp/12)) * 440.0
+def musical_pitch_to_hertz(mp, justify_by_scale=None):
+    if justify_by_scale == None:
+        ## Use equal temperament that places A4 at 440 hertz
+        return (2**(mp/12)) * 440.0
+    else:
+        ## Use just diatonic scale (notes that give just major triads on I, IV, V) See https://en.wikipedia.org/wiki/Just_intonation#Diatonic_scale
+        p_i = (mp - justify_by_scale) % 12
+        tonic_pitch = mp - p_i
+        tonic_freq = musical_pitch_to_hertz(tonic_pitch, justify_by_scale=None)
+        just_semitone_factor = {0:1, 2:9/8, 4:5/4, 5:4/3, 7:3/2, 9:5/3, 11:15/8}
+        if p_i in just_semitone_factor:
+            return tonic_freq * just_semitone_factor[p_i]
+        else:
+            return musical_pitch_to_hertz(mp, justify_by_scale=None)
+
+'''
+Given a pitch (integer) and a scale tonic, give the floating point pitch index of where the justified pitch would be in that scale
+'''
+def pitch_to_just_pitch(pitch, tonic):
+        freq = musical_pitch_to_hertz(pitch, justify_by_scale=tonic)
+        just_pitch = 12 * log(freq/440, 2)
+        return just_pitch
 
 def sin(freq, sample_count=FS, fs=FS, volume=1, previous_volume=1, percent_through_period=0, overtones=[1]):
     count = sample_count
