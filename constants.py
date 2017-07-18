@@ -17,7 +17,7 @@ INSTRUCTIONS_BOUNDS_CLOSED = (SCREEN_DIM[0] - 250 - INSTRUCTIONS_PADDING, INSTRU
 INSTRUCTIONS_START_CLOSED = True
 PITCH_SPEED = .02
 PITCH_RANGE = (-4, 24)
-VOLUME = .015
+VOLUME = .005
 ARTICULATION_FACTOR = 2.5
 ARTICULATION_DECAY = .1
 LOOP_MAX_VOLUME = 10
@@ -47,7 +47,8 @@ CHROMATIC_SCALE = list(range(0,12))
 
 METRONOME_RELATIVE_VOLUME = 5 ## Relative to VOLUME
 INACTIVE_NOTE_WIDTH = 3
-ACTIVE_NOTE_STRETCH = 80
+ACTIVE_NOTE_STRETCH = 1600
+LOOP_VISUAL_NOTE_STRETCH = 500
 
 INACTIVE_COLORS = [
         (64,0,100), #A
@@ -142,10 +143,11 @@ def init_font():
 def get_font():
     return font
 
-def volume_factor_by_freq(freq):
-    return 4000/((freq+5)**.95)
-
-
+#def volume_factor_by_freq(freq):
+def loud_to_volume(loud, freq):
+    return loud*1000/((freq+5)**.75)
+def volume_to_loud(volume, freq):
+    return volume * ((freq+5)**.75) / 1000
 
 BEAT_LEN = 30
 

@@ -143,7 +143,15 @@ class AudioPlayer:
             self.volume = 0
 
     def adjusted_base_volume(self):
-        return volume_factor_by_freq(self.freq)*self.base_volume
+        return loud_to_volume(self.base_volume, self.freq)
+
+    def get_loudness(self):
+        return volume_to_loud(self.volume, self.freq)
+
+    def articulate(self):
+        self.volume = ARTICULATION_FACTOR * self.adjusted_base_volume()
+        self.previous_volume = self.volume
+        self.playing=True
 
     def increase_volume(self):
         self.base_volume *= 1.1

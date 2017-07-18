@@ -93,7 +93,7 @@ class Loop:
         for rn in flat_notes:
             rnx = rn.buffer_index * rnw
             rny = (pitch_range[1] - rn.pitch) / (pitch_range[1] - pitch_range[0]) * h
-            rnh = max(1,int(rn.volume*20*self.volume))
+            rnh = max(1,int(rn.get_loudness()*LOOP_VISUAL_NOTE_STRETCH))
             pygame.draw.rect(screen, (0,0,0), (rnx, rny-rnh-1, rnw+1, rnh+2))
             color = LOOP_MUTED_PITCH_COLOR if self.muted else get_color(rn.pitch, SATURATED_COLORS)
             pygame.draw.rect(screen, color, (rnx, rny-rnh, rnw+1, rnh))
@@ -206,5 +206,10 @@ class RecordedNote:
 
     def __repr__(self):
         return 'RecordedNote('+str(self.buffer_index)+', '+str(self.pitch)+', '+str(self.volume)+')'
+
+    def get_loudness(self):
+        if self.loop != None:
+            return volume_to_loud(self.volume * self.loop.volume, musical_pitch_to_hertz(self.pitch))
+        return volume_to_loud(self.volume, musical_pitch_to_hertz(self.pitch))
 
 

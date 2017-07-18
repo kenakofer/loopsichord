@@ -231,9 +231,7 @@ class MusicMaker:
         ## Articulating and continuing a note playing
         if self.b_left:
             if not self.audio_player.playing:
-                self.audio_player.volume = ARTICULATION_FACTOR * self.audio_player.adjusted_base_volume()
-                self.audio_player.previous_volume = self.audio_player.volume
-                self.audio_player.playing=True
+                self.audio_player.articulate()
             else:
                 self.audio_player.settle_to_volume()
         
@@ -345,7 +343,7 @@ class MusicMaker:
                 on_this_pitch = [rn for rn in notes_to_draw if rn.pitch == p]
                 notes_to_draw = [rn for rn in notes_to_draw if not rn in on_this_pitch]
                 if len(on_this_pitch) > 0:
-                    sum_volume = sum(map(lambda rn: rn.volume*rn.loop.volume if rn.loop else rn.volume, on_this_pitch))
+                    sum_volume = sum(map(lambda rn: rn.get_loudness(), on_this_pitch))
                     line_width = max(INACTIVE_NOTE_WIDTH, int(sum_volume*ACTIVE_NOTE_STRETCH))
                     pygame.draw.line(self.screen, color, (x,y), (x,y+self.scale_height), line_width)
                     if get_font() and p_i == scale[0]:
@@ -358,7 +356,7 @@ class MusicMaker:
 
         ## The remaining pitches in notes_to_draw are not on a bar
         for rn in notes_to_draw:
-            line_width = max(INACTIVE_NOTE_WIDTH, int(rn.volume * ACTIVE_NOTE_STRETCH))
+            line_width = max(INACTIVE_NOTE_WIDTH, int(rn.get_loudness() * ACTIVE_NOTE_STRETCH))
             x = self.pitch_to_coord(rn.pitch)
             pygame.draw.line(self.screen, FREE_NOTE_COLOR, (x, y), (x,y+self.scale_height), line_width)
 
