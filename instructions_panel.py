@@ -11,6 +11,7 @@ class InstructionsPanel:
         'Middle click: Center the mouse',
         'Scroll: Adjust volume',
         'S: Use sliding pitches',
+        'J: Toggle just intonation',
         '',
         'Metronome',
         'Left/Right: Increase track length',

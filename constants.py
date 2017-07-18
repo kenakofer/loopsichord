@@ -187,10 +187,6 @@ def sin(freq, sample_count=FS, fs=FS, volume=1, previous_volume=1, percent_throu
     samples = samples.astype(np.float32)
     return  samples, new_ptp
 
-def FOLLOW_LINE_COLOR(dist):
-    dist = min(150, dist ** 2)
-    return (255-dist, 50 - dist//4, 80 - dist//4)
-
 #MY_OVERTONES = [1, .940, .425, .480, 0, .365, .040, .085, 0, .090]
 #MY_OVERTONES = [1, .50, .425, 0, .4, 0, .040, .085, .05 ]
 MY_OVERTONES = [1, .50, .425, 0, .4, 0, .040]

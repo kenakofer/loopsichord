@@ -200,6 +200,15 @@ class MusicMaker:
                 if is_key_mod(RIGHT, SHIFT) and not last_keys[RIGHT]:
                     self.metronome.change_beat_count(1)
 
+        ## Toggle justify pitch
+        if is_key_mod(K_J, None) and not last_keys[K_J]:
+            self.audio_player.justify_pitch = not self.audio_player.justify_pitch
+            self.background_needs_update = True
+            for loop in self.audio_player.loops:
+                loop.recalculate_buffers()
+
+        
+
         if not self.audio_player.loop_recording:
             ## Move the active loop indicator up and down
             if is_key_mod(UP, None) and not last_keys[UP]:
@@ -390,7 +399,7 @@ class MusicMaker:
             return (self.pitch_range[1] - self.pitch_range[0]) / SCREEN_DIM[coord] * y + self.pitch_range[0]
 
     def pitch_to_coord(self, p, coord=0, reverse=False, scale=None):
-        if scale != None:
+        if scale != None and self.audio_player.justify_pitch:
             p = pitch_to_just_pitch(p, scale)
         if reverse:
             return SCREEN_DIM[coord] - (p - self.pitch_range[0]) / (self.pitch_range[1] - self.pitch_range[0]) * SCREEN_DIM[coord]

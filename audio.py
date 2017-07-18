@@ -26,6 +26,7 @@ class AudioPlayer:
         self.loop_playing = True
         self.loop_recording = False
         self.stream = self.get_stream()
+        self.justify_pitch = False
 
     def get_stream(self):
         global stream
@@ -73,7 +74,8 @@ class AudioPlayer:
             ## Do step is where all the action happens
             self.music_maker.do_step()
 
-            self.freq = musical_pitch_to_hertz(self.music_maker.pitch, justify_by_scale=self.music_maker.scale[0])
+            tonic = self.music_maker.scale[0] if self.justify_pitch else None
+            self.freq = musical_pitch_to_hertz(self.music_maker.pitch, justify_by_scale=tonic)
 
             if self.volume != 0:
                 ## Generate a sin wave with overtones, starting at the percent through a period where the previous one left off. Return the samples and the percent through the period that the samples ends
