@@ -51,14 +51,13 @@ class Metronome:
     def is_measure(self, buffer_number):
         return buffer_number == 0
 
-    def paint_self(self, screen, buffer_number, is_active):
+    def paint_self(self, screen, pos, buffer_number, is_active):
         height = 40
         m_width = self.measure_len * self.visual_buffer_width
         b_width = m_width // self.beats
         m_width = b_width * self.beats
         self.visual_buffer_width = m_width // self.measure_len
-        x = 10
-        y = 10
+        (x,y) = pos
         ## Background
         pygame.draw.rect(screen, METRONOME_INACTIVE_COLOR, (x,y,m_width, height), 0)
         ## Active index outline

@@ -8,6 +8,7 @@ from copy import deepcopy
 from audio import *
 from instructions_panel import *
 from loop import *
+from overtone_panel import *
 
 class MusicMaker:
 
@@ -28,6 +29,7 @@ class MusicMaker:
         self.background = None
         self.background_needs_update = True
         self.instructions = InstructionsPanel()
+        self.overtone_panel = OvertonePanel(MY_OVERTONES)
         self.audio_player = None
         self.audio_player = AudioPlayer(self)
         self.audio_player.run()
@@ -307,10 +309,12 @@ class MusicMaker:
             s = SCALES[i]
             self.draw_scale_activity(s, y, self.scale is s)
             y += self.scale_height
+        ## Draw overtone_panel
+        self.overtone_panel.paint_self(self.screen, (10,10,150,40))
         ## Draw metronome
-        self.metronome.paint_self(self.screen, self.audio_player.loop_buffer_index, -1 in self.audio_player.active_loops)
+        self.metronome.paint_self(self.screen, (10,60), self.audio_player.loop_buffer_index, -1 in self.audio_player.active_loops)
         ## Draw the loops
-        y = 60
+        y = 110
         x = 10
         w = self.metronome.measure_len * self.metronome.visual_buffer_width
         h = 30
