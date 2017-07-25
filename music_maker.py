@@ -68,13 +68,23 @@ class MusicMaker:
             if event.type == pygame.QUIT:
                 pygame.quit()
             ## These events aren't caught by the pygame.mouse methods
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONDOWN:
                 ## Scroll down
                 if event.button == 5:
                     self.audio_player.decrease_volume()
                 ## Scroll up
                 if event.button == 4:
                     self.audio_player.increase_volume()
+            ## Window resize
+            elif event.type == pygame.VIDEORESIZE:
+                w,h = event.size
+                min_w, min_h = MIN_DIM
+                w = max(min_w, w)
+                h = max(min_h, h)
+                update_screen_size((w,h))
+                self.background_needs_update = True
+                self.scale_height = SCREEN_DIM[1] / len(self.using_scales)
+                self.screen = pygame.display.set_mode(SCREEN_DIM, pygame.RESIZABLE)
 
         ## Get the exact pitch from the mouse x coordinate
         self.mouse_pitch = self.coord_to_pitch(m_x, coord=0, reverse=False)
