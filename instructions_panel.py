@@ -39,6 +39,10 @@ class InstructionsPanel:
         'Shift-Left/Right: Shift track(s)',
         'Ctrl-Up/Down: Pitch shift track(s)',
         ' +Shift: By eighth tone',
+        '',
+        'Harmonics',
+        'Shift-(1-9): Increase harmonic',
+        'Ctrl-(1-9): Lower harmonic',
         ]
 
     minimized_instruction_string = "?: Show/Hide controls"
