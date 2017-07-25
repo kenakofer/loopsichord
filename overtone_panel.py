@@ -31,7 +31,6 @@ class OvertonePanel:
         x = w//2
         y_list, _ = sin(1, sample_count=w//2, fs=w//2, overtones=self.overtones)
         for i,y in enumerate(y_list):
-            print(y,i)
             if i == len(y_list)-1:
                 break
             this_y = y*h/4 + h/2

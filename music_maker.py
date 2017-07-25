@@ -236,7 +236,7 @@ class MusicMaker:
 
             ## Multiply metronome and loops a given number of times
             for num in range(0,10):
-                if is_key_mod(NUMS[num], None) and not last_keys[NUMS[num]]:
+                if is_key_mod(NUMS[num], CTRL | ALT) and not last_keys[NUMS[num]]:
                     self.audio_player.multiply_tracks(num)
 
 

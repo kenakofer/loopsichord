@@ -16,7 +16,7 @@ class InstructionsPanel:
         'Metronome',
         'Left/Right: Increase track length',
         'Shift-Left/Right: Increase track beats',
-        '2-9: Multiply track(s)',
+        'Ctrl-Alt-(2-9): Multiply track(s)',
         '',
         'Program',
         'Ctrl-S: Save the recorded tracks',

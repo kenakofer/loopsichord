@@ -76,10 +76,11 @@ class AudioPlayer:
 
             tonic = self.music_maker.scale[0] if self.justify_pitch else None
             self.freq = musical_pitch_to_hertz(self.music_maker.pitch, justify_by_scale=tonic)
+            overtones = self.music_maker.overtone_panel.overtones
 
             if self.volume != 0:
                 ## Generate a sin wave with overtones, starting at the percent through a period where the previous one left off. Return the samples and the percent through the period that the samples ends
-                new_samples, self.percent_through_period = sin(self.freq, sample_count=frame_count, fs=FS, volume=self.volume, previous_volume=self.previous_volume, percent_through_period=self.percent_through_period, overtones = MY_OVERTONES)
+                new_samples, self.percent_through_period = sin(self.freq, sample_count=frame_count, fs=FS, volume=self.volume, previous_volume=self.previous_volume, percent_through_period=self.percent_through_period, overtones=overtones)
             else:
                 new_samples = np.zeros(frame_count).astype(np.float32)
             samples = np.copy(new_samples)

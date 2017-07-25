@@ -6,7 +6,7 @@ import pickle
 
 class Loop:
 
-    def __init__(self, length):
+    def __init__(self, length, overtones=MY_OVERTONES):
         self.buffers = [np.zeros(BUFFER_SIZE) for i in range(length)]
         self.recorded_notes = [[] for i in range(length)]
         self.volume = 1
@@ -14,7 +14,7 @@ class Loop:
         self.muted = False
         self.image = None
         self.image_needs_update = True
-        self.overtones = MY_OVERTONES
+        self.overtones = overtones
         self.previous_note = None
 
     def combine(self, other):
@@ -182,7 +182,7 @@ class Loop:
             start = rn.previous_note.percent_through_period
         ## Generate a sin wave with overtones, starting at the percent through a period where the previous one left off. Return the samples and the percent through the period that the samples ends
         freq = musical_pitch_to_hertz(rn.pitch, justify_by_scale=rn.scale[0])
-        samples, rn.percent_through_period = sin(freq, sample_count=BUFFER_SIZE, fs=FS, volume=rn.volume, previous_volume=rn.previous_volume, percent_through_period=start, overtones = self.overtones)
+        samples, rn.percent_through_period = sin(freq, sample_count=BUFFER_SIZE, fs=FS, volume=rn.volume, previous_volume=rn.previous_volume, percent_through_period=start, overtones=self.overtones)
         self.buffers[rn.buffer_index] += samples
         rn.recalculated = True
 
