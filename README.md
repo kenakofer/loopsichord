@@ -43,6 +43,7 @@ If the audio is consistently jittery, try closing some programs on your computer
 ### Other:
  - Instruction menu on startup or keypress
  - Adjustable metronome settings (before loops are present)
+ - Adjustable harmonics
  - Uses buffering of images wherever possible to reduce CPU load
  - Just and equal temperament capabilities
  - ```constants.py``` contains many configurable options for the UI and backend
@@ -50,7 +51,6 @@ If the audio is consistently jittery, try closing some programs on your computer
  ---
  
 ## Features that will be added soon:
- - Adjustable harmonics
  - Adjustable loop length after loops exist
  - Optional beat alignment to assist with rhythmic precision (quantizing)
  - Swapping custom scales in and out of the UI (e.g. whole tone, harmonic minor)
