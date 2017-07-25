@@ -31,6 +31,7 @@ class MusicMaker:
         self.instructions = InstructionsPanel()
         self.overtone_panel = OvertonePanel(MY_OVERTONES)
         self.audio_player = None
+        self.loop_overtone_changes = False
         self.audio_player = AudioPlayer(self)
         self.audio_player.run()
 
@@ -240,20 +241,32 @@ class MusicMaker:
                     self.audio_player.multiply_tracks(num)
 
             ## Change overtones
+            changed=False
             for num in range(1,10):
-                if is_key_mod(NUMS[num], SHIFT) and not last_keys[NUMS[num]]:
+                if is_key_mod(NUMS[num], SHIFT):
+                    changed=True
                     for index in self.audio_player.active_loops:
                         overtones = self.overtone_panel.change_overtone(num-1, .05)
                         if index >=0:
+                            self.loop_overtone_changes=True
                             self.audio_player.loops[index].overtones = overtones
                             self.audio_player.loops[index].recalculate_buffers()
             for num in range(1,10):
-                if is_key_mod(NUMS[num], CTRL) and not last_keys[NUMS[num]]:
+                if is_key_mod(NUMS[num], CTRL):
+                    changed=True
                     for index in self.audio_player.active_loops:
                         overtones = self.overtone_panel.change_overtone(num-1, -.05)
                         if index >=0:
+                            self.loop_overtone_changes=True
                             self.audio_player.loops[index].overtones = overtones
                             self.audio_player.loops[index].recalculate_buffers()
+            if not changed and self.loop_overtone_changes:
+                self.loop_overtone_changes = False
+                #TODO only recalculate relevant loops
+                for l in self.audio_player.loops:
+                    l.recalculate_buffers()
+
+
 
 
         ## Articulating and continuing a note playing
