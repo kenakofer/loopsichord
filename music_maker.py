@@ -236,8 +236,24 @@ class MusicMaker:
 
             ## Multiply metronome and loops a given number of times
             for num in range(0,10):
-                if is_key_mod(NUMS[num], CTRL | ALT) and not last_keys[NUMS[num]]:
+                if is_key_mod(NUMS[num], None, modlist=[CTRL, ALT]) and not last_keys[NUMS[num]]:
                     self.audio_player.multiply_tracks(num)
+
+            ## Change overtones
+            for num in range(1,10):
+                if is_key_mod(NUMS[num], SHIFT) and not last_keys[NUMS[num]]:
+                    for index in self.audio_player.active_loops:
+                        overtones = self.overtone_panel.change_overtone(num-1, .05)
+                        if index >=0:
+                            self.audio_player.loops[index].overtones = overtones
+                            self.audio_player.loops[index].recalculate_buffers()
+            for num in range(1,10):
+                if is_key_mod(NUMS[num], CTRL) and not last_keys[NUMS[num]]:
+                    for index in self.audio_player.active_loops:
+                        overtones = self.overtone_panel.change_overtone(num-1, -.05)
+                        if index >=0:
+                            self.audio_player.loops[index].overtones = overtones
+                            self.audio_player.loops[index].recalculate_buffers()
 
 
         ## Articulating and continuing a note playing

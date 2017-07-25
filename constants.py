@@ -225,10 +225,13 @@ KP_MINUS = pygame.K_KP_MINUS
 SLASH   = pygame.K_SLASH
 NUMS = [pygame.K_0, pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4, pygame.K_5, pygame.K_6, pygame.K_7, pygame.K_8, pygame.K_9]
 
-def is_key_mod(key, mod=None):
-    if mod == None:
+def is_key_mod(key, mod=None, modlist=None):
+    if mod == None and modlist == None:
         return keys[key] and pygame.key.get_mods() == 0
+    elif mod != None:
+        return keys[key] and pygame.key.get_mods() & mod
     else:
+        return keys[key] and all([pygame.key.get_mods() & m for m in modlist])
         return keys[key] and pygame.key.get_mods() & mod
 
 if not LAYOUT_DVORAK:

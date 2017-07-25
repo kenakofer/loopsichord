@@ -9,6 +9,15 @@ class OvertonePanel:
         self.image_needs_update = True
         self.overtones = overtones
 
+    def change_overtone(self, index, amount):
+        while len(self.overtones)-1 < index:
+            self.overtones.append(0)
+        self.overtones[index] += amount
+        self.overtones[index] = min(1, self.overtones[index])
+        self.overtones[index] = max(0, self.overtones[index])
+        self.image_needs_update = True
+        return self.overtones
+
     def paint_self(self, screen, rect):
         (x,y,w,h) = rect
         if self.image == None or self.image_needs_update:
