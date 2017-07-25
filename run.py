@@ -11,7 +11,7 @@ def main():
     pygame.init()
     
     # set screen width/height and caption
-    screen = pygame.display.set_mode(SCREEN_DIM)
+    screen = pygame.display.set_mode(SCREEN_DIM, pygame.RESIZABLE)
     pygame.display.set_caption('Some digital instrument thing')
     root = Tk()
     root.withdraw() # won't need this
