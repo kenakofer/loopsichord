@@ -22,10 +22,14 @@ class Loop:
         for i, l in enumerate(self.recorded_notes):
             l.extend(other.recorded_notes[i])
             for rn in l:
+                rn.volume *= rn.loop.volume 
+                rn.previous_volume *= rn.loop.volume 
                 rn.loop = self
                 assert rn.buffer_index == i
             l.sort(key=lambda rn: rn.pitch, reverse=True) 
-            self.buffers[i] += other.buffers[i]
+            self.buffers[i] *= self.volume
+            self.buffers[i] += other.buffers[i] * other.volume
+        self.volume = 1
 
     def toggle_mute(self):
         self.image_needs_update = True
