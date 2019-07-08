@@ -284,6 +284,7 @@ else:
     K_X     =pygame.K_q
     K_Y     =pygame.K_f
     K_Z     =pygame.K_SEMICOLON
+    K_PERIOD=pygame.K_v
 
 
 

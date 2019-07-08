@@ -10,7 +10,7 @@ class InstructionsPanel:
         'Right click: Use chromatics',
         'Middle click: Center the mouse',
         'Scroll: Adjust volume',
-        'S: Use sliding pitches',
+        '.: Use sliding pitches',
         'J: Toggle just intonation',
         '',
         'Metronome',

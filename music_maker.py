@@ -278,7 +278,7 @@ class MusicMaker:
         ## Decide whether to align to the closest pitch, or use the mouse pitch
         #if not last_b_middle:
         if self.b_left or self.audio_player.volume == 0: 
-            if is_key_mod(K_S, None): 
+            if is_key_mod(K_PERIOD, None): 
                 self.pitch = self.mouse_pitch
             else:
                 self.pitch = self.closest_pitch
