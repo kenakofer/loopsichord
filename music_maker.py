@@ -253,9 +253,13 @@ class MusicMaker:
         self.scale_index = (self.using_scales[0] + int(m_y / SCREEN_DIM[1] * len(self.using_scales))) %12
         self.scale = SCALES[self.scale_index]
 
+        if (is_key_mod(K_S, None)):
+            self.scale = [self.scale[0], self.scale[2], self.scale[4]]
+
         ## Temporarily align to the chromatic scale on the current scale
         if (self.b_right):
             self.scale = CHROMATIC_SCALE
+
 
         ## Show and hide the instructions (really for QUESTION_MARK, but SLASH is more accepting)
         if (keys[SLASH] and not last_keys[SLASH]):
@@ -267,7 +271,11 @@ class MusicMaker:
         ## Get scale degree of closest pitch
         self.closest_pitch = sorted(self.scale, key=lambda x: min(abs((self.mouse_pitch%12)-x), 12 - abs((self.mouse_pitch%12)-x))) [0]
         ## Put closest pitch in correct octave
-        self.closest_pitch += math.floor(self.mouse_pitch / 12) * 12
+        while abs(self.closest_pitch - self.mouse_pitch) > 6:
+            if self.closest_pitch > self.mouse_pitch:
+                self.closest_pitch -= 12
+            else:
+                self.closest_pitch += 12
         ## Correct an error by rounding up if self.mouse_pitch > 11.5
         if abs(self.mouse_pitch - self.closest_pitch) > 10:
             self.closest_pitch += 12
