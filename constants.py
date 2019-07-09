@@ -211,7 +211,8 @@ def sin(freq, sample_count=FS, fs=FS, volume=1, previous_volume=1, percent_throu
 
 #MY_OVERTONES = [1, .940, .425, .480, 0, .365, .040, .085, 0, .090]
 #MY_OVERTONES = [1, .50, .425, 0, .4, 0, .040, .085, .05 ]
-MY_OVERTONES = [1, .50, .425, 0, .4, 0, .040]
+#MY_OVERTONES = [1, .50, .425, 0, .4, 0, .040]
+MY_OVERTONES = [1, .60, .30, .1, .05]
 
 ################
 #INDEX CONSTANTS
