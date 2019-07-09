@@ -25,6 +25,7 @@ class MusicMaker:
         self.using_scales = list(range(1,6))
         self.scale = self.using_scales[3]
         self.scale_height = SCREEN_DIM[1] / len(self.using_scales)
+        self.chord = None
         self.background = None
         self.background_needs_update = True
         self.instructions = InstructionsPanel()
@@ -253,10 +254,63 @@ class MusicMaker:
         self.scale_index = (self.using_scales[0] + int(m_y / SCREEN_DIM[1] * len(self.using_scales))) %12
         self.scale = SCALES[self.scale_index]
 
-        if (is_key_mod(K_S, None)):
-            self.scale = [self.scale[0], self.scale[2], self.scale[4]]
+        if (is_key_mod(K_A, None)):
+            self.chord = V[:]
+        elif (is_key_mod(K_S, None)):
+            self.chord = I[:]
+        elif (is_key_mod(K_D, None)):
+            self.chord = IV[:]
+        elif (is_key_mod(K_F, None)):
+            self.chord = VIIb[:]
+        elif (is_key_mod(K_A, SHIFT)):
+            self.chord = V[:]
+            self.chord.append((self.chord[0]+10)%12)
+        elif (is_key_mod(K_S, SHIFT)):
+            self.chord = I[:]
+            self.chord.append((self.chord[0]+10)%12)
+        elif (is_key_mod(K_D, SHIFT)):
+            self.chord = IV[:]
+            self.chord.append((self.chord[0]+10)%12)
+        elif (is_key_mod(K_F, SHIFT)):
+            self.chord = VIIb[:]
+            self.chord[0] += 1
+            self.chord[0] %= 12
+            self.chord.append((self.chord[0]+9)%12)
+        elif (is_key_mod(K_Q, None)):
+            self.chord = III[:]
+            self.chord[1] += 11# Make minor
+            self.chord[1] %= 12# Make minor
+        elif (is_key_mod(K_W, None)):
+            self.chord = VI[:]
+            self.chord[1] += 11# Make minor
+            self.chord[1] %= 12# Make minor
+        elif (is_key_mod(K_E, None)):
+            self.chord = II[:]
+            self.chord[1] += 11# Make minor
+            self.chord[1] %= 12# Make minor
+        elif (is_key_mod(K_R, None)):
+            self.chord = V[:]
+            self.chord[1] += 11# Make minor
+            self.chord[1] %= 12# Make minor
+        elif (is_key_mod(K_Q, SHIFT)):
+            self.chord = III[:]
+            self.chord.append((self.chord[0]+10)%12)
+        elif (is_key_mod(K_W, SHIFT)):
+            self.chord = VI[:]
+            self.chord.append((self.chord[0]+10)%12)
+        elif (is_key_mod(K_E, SHIFT)):
+            self.chord = II[:]
+            self.chord.append((self.chord[0]+10)%12)
+        elif (is_key_mod(K_R, SHIFT)):
+            self.chord = V[:]
+            self.chord.append((self.chord[0]+10)%12)
+        else:
+            self.chord = None
 
-        ## Temporarily align to the chromatic scale on the current scale
+        ## Temporarily align to the chord or chromatic scale on the current scale
+        ## Self.scale will be put back after pitch decision making
+        if self.chord != None:
+            self.scale = [(self.scale[0] + c) % 12 for c in self.chord] # put chord in current scale key
         if (self.b_right):
             self.scale = CHROMATIC_SCALE
 
@@ -351,22 +405,31 @@ class MusicMaker:
         if self.scale == scale:
             notes_to_draw.append(RecordedNote(-1, self.pitch, self.audio_player.volume, None, self.scale, None, None))
 
+
         for p in range(self.pitch_range[0], self.pitch_range[1]+1):
             p_i = p % 12
-            if p_i in scale:
-                x = self.pitch_to_coord(p, coord=0, reverse=False, scale=scale[0])
+            absolute_chord = None
+            if self.chord:
+                absolute_chord = [(scale[0] + c) % 12 for c in self.chord] # put chord in current scale key
+            in_chord = self.scale == scale and absolute_chord and p_i in absolute_chord
+            if p_i in scale or in_chord:
                 color = ACTIVE_COLORS[p_i] if is_active and self.closest_pitch == p else INACTIVE_COLORS[p_i]
+                x = self.pitch_to_coord(p, coord=0, reverse=False, scale=scale[0])
                 
                 ##Determine line width based on notes_to_draw:
                 on_this_pitch = [rn for rn in notes_to_draw if rn.pitch == p]
                 notes_to_draw = [rn for rn in notes_to_draw if not rn in on_this_pitch]
-                if len(on_this_pitch) > 0:
+                if len(on_this_pitch) > 0 or in_chord:
                     sum_volume = sum(map(lambda rn: rn.get_loudness(), on_this_pitch))
                     line_width = max(INACTIVE_NOTE_WIDTH, int(sum_volume*ACTIVE_NOTE_STRETCH))
                     pygame.draw.line(self.screen, color, (x,y), (x,y+self.scale_height), line_width)
                     if get_font() and p_i == scale[0]:
                         l1 = get_font().render(NOTE_NAMES[p_i], 1, color)
                         self.screen.blit(l1, (x+10, y+self.scale_height-30))
+                ## Autoharp chord black out notes
+                if absolute_chord and p_i not in absolute_chord: # pitch in current scale, not in chord 
+                    pygame.draw.line(self.screen, (0,0,0), (x,y), (x,y+self.scale_height), INACTIVE_NOTE_WIDTH)
+
         if is_active:
             color = INACTIVE_COLORS[scale[0]]
             pygame.draw.line(self.screen, color, (0,y), (SCREEN_DIM[0],y), 4) 

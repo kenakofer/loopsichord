@@ -142,6 +142,16 @@ EVENT_STOP_LOOP_REC = (ACTION_STOP_LOOP_REC, NEXT_BUFFER, BEGIN_STEP)
 EVENT_START_LOOP_PLAY = (ACTION_START_LOOP_PLAY, NEXT_BUFFER, END_STEP)
 EVENT_STOP_LOOP_PLAY = (ACTION_STOP_LOOP_PLAY, NEXT_BUFFER, BEGIN_STEP)
 
+# Chords, given in half steps from Do
+I = [0, 4, 7]
+V = [7, 11, 2]
+II = [2, 6, 9]
+VI = [9, 1, 4]
+III = [4, 8, 11]
+VII = [11, 3, 6]
+IV = [5, 9, 0]
+VIIb = [10, 2, 5]
+VIb = [8, 0, 3]
 
 font=None
 def init_font():
