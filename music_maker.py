@@ -411,12 +411,12 @@ class MusicMaker:
             absolute_chord = None
             if self.chord:
                 absolute_chord = [(scale[0] + c) % 12 for c in self.chord] # put chord in current scale key
-            in_chord = self.scale == scale and absolute_chord and p_i in absolute_chord
+            in_chord = absolute_chord and p_i in absolute_chord
             if p_i in scale or in_chord:
                 color = ACTIVE_COLORS[p_i] if is_active and self.closest_pitch == p else INACTIVE_COLORS[p_i]
                 x = self.pitch_to_coord(p, coord=0, reverse=False, scale=scale[0])
                 
-                ##Determine line width based on notes_to_draw:
+                ## Determine line width based on notes_to_draw:
                 on_this_pitch = [rn for rn in notes_to_draw if rn.pitch == p]
                 notes_to_draw = [rn for rn in notes_to_draw if not rn in on_this_pitch]
                 if len(on_this_pitch) > 0 or in_chord:
