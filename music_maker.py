@@ -14,7 +14,10 @@ class MusicMaker:
     def __init__(self, screen):
         self.pitch = 0
         self.screen = screen
-        self.pitch_range = PITCH_RANGE
+        self.pitch_range = (
+                int(PITCH_CENTER_START - PITCH_RANGE_SMALL//2), 
+                int(PITCH_CENTER_START + PITCH_RANGE_SMALL//2)
+                )
         self.b_left = 0
         self.b_middle = 0
         self.b_right = 0
@@ -234,9 +237,25 @@ class MusicMaker:
                 self.audio_player.active_loops.append(self.audio_player.active_loops[-1]+1)
 
             ## Multiply metronome and loops a given number of times
-            for num in range(0,10):
+            for num in range(2,10):
                 if is_key_mod(NUMS[num], None) and not last_keys[NUMS[num]]:
                     self.audio_player.multiply_tracks(num)
+
+            ## Change horizontal zoom level (pitch ranges)
+            if is_key_mod(NUMS[1], None) and not last_keys[NUMS[1]]:
+                range_width = self.pitch_range[1] - self.pitch_range[0]
+                range_middle = self.pitch_range[1] - range_width // 2
+
+                if range_width == PITCH_RANGE_SMALL:
+                    new_range = PITCH_RANGE_LARGE
+                else:
+                    new_range = PITCH_RANGE_SMALL
+                self.pitch_range = (
+                        int(range_middle - new_range//2), 
+                        int(range_middle + new_range//2)
+                        )
+                self.background_needs_update = True
+
 
 
         ## Articulating and continuing a note playing

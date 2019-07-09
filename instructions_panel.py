@@ -10,6 +10,7 @@ class InstructionsPanel:
         'Right click: Use chromatics',
         'Middle click: Center the mouse',
         'Scroll: Adjust volume',
+        '1: Change horizontal zoom',
         '.: Use sliding pitches',
         'J: Toggle just intonation',
         '',
