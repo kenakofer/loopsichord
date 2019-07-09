@@ -33,7 +33,7 @@ class InstructionsPanel:
         'P: Mute/unmute all tracks',
         '+/-: Adjust volume of track(s)',
         'Ctrl-C: Copy track(s)',
-        'A: Add tracks together',
+        'U: Add selected tracks together',
         'Alt-Up/Down: Move track(s)',
         'Left/Right: Shift track(s) by beat',
         'Shift-Left/Right: Shift track(s)',

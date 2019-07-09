@@ -162,7 +162,7 @@ class MusicMaker:
                 self.audio_player.active_loops = [x+1 for x in self.audio_player.active_loops]
 
             ## Add the selected loops 
-            if is_key_mod(K_A, None) and not last_keys[K_A]:
+            if is_key_mod(K_U, None) and not last_keys[K_U]:
                 while len(self.audio_player.active_loops) > 1:
                     i = self.audio_player.active_loops[0]
                     other = self.audio_player.active_loops.pop()
